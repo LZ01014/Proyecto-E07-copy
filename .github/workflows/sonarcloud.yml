@@ -65,3 +65,5 @@ jobs:
             -Dsonar.tests=client/src,server/src
             -Dsonar.verbose=true
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.*,**/coverage/**,**/build/**
+            
+          projectBaseDir: .
