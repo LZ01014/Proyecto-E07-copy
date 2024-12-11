@@ -46,7 +46,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Debug workspace
+      - name: Debug workspace1
+        run: pwd
+        
+      - name: Debug workspace2
         run: ls -R
         
       - name: Analyze with SonarCloud
