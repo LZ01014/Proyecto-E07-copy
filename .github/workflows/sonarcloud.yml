@@ -55,7 +55,7 @@ jobs:
           args: >
             -Dsonar.projectKey=LZ01014_Proyecto-E07-copy
             -Dsonar.organization=lz01014
-            -Dsonar.sources=.
-            -Dsonar.tests=.
+            -Dsonar.sources=client/src,server/src
+            -Dsonar.tests=client/src,server/src
             -Dsonar.verbose=true
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.*,**/coverage/**,**/build/**
