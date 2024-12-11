@@ -1,38 +1,38 @@
-// eliminación.js
+// Importar mongoose y dotenv
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
+// Cargar variables de entorno desde .env
 dotenv.config();
 
-// Configuración de conexión a MongoDB
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/test'; // Ajusta esto si tienes otra URI
+// Configuración de la URL de conexión a MongoDB (desde el archivo .env)
+const MONGO_URL = process.env.MONGODB_URI;
 
-// Conecta a la base de datos MongoDB
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('Conectado a MongoDB');
-  return eliminarColeccionUsuarios();
-})
-.catch((error) => {
-  console.error('Error al conectar a MongoDB:', error);
-});
-
-// Función para eliminar la colección 'usuarios'
-async function eliminarColeccionUsuarios() {
+// Función principal para eliminar la colección "Cita"
+async function eliminarColeccionCita() {
   try {
-    await mongoose.connection.db.collection('departamentos').drop();
-    console.log('Colección "usuarios" eliminada exitosamente');
+    // Conectar a la base de datos
+    await mongoose.connect(MONGO_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    console.log('Conexión a MongoDB exitosa');
+
+    // Eliminar la colección "Cita"
+    await mongoose.connection.db.dropCollection('citas');
+    console.log('Colección "Cita" eliminada exitosamente');
   } catch (error) {
     if (error.code === 26) {
-      console.log('La colección "usuarios" no existe');
+      console.log('La colección "Cita" no existe');
     } else {
-      console.error('Error al eliminar la colección "usuarios":', error);
+      console.error('Error al eliminar la colección "Cita":', error);
     }
   } finally {
-    mongoose.connection.close(); // Cierra la conexión a MongoDB
+    // Cerrar la conexión a la base de datos
+    await mongoose.disconnect();
     console.log('Conexión a MongoDB cerrada');
   }
 }
+
+// Ejecutar la función
+eliminarColeccionCita();

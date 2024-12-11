@@ -1,62 +1,67 @@
-// src/router/routes.js
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import PaginaInicio from './components/Inicio.vue';
-import CreacionUsuarios from './components/CreacionUsuarios.vue';
-import GestionDepartamentos from './components/GestionDepartamentos.vue'; 
+import { createRouter, createWebHistory } from 'vue-router';
+import PaginaEquipoMedico from './components/PaginaEquipoMedico.vue';
+import UserLogin from './components/UserLogin.vue';
+import UserRegister from './components/UserRegister.vue';
+import IntranetLogin from './components/IntranetLogin.vue';
+import ContactForm from './components/Contacto.vue';
+import GestionPrestaciones from './components/GestionPrestaciones.vue';
+import AgendaMedico from './components/AgendaMedico.vue';
+import GestionRecetas from './components/GestionRecetas.vue';
+import ListaFormContacto from './components/ListaFormContacto.vue';
+import ReservarCitas from './components/ReservarCitas.vue';
+import InicioGerencia from './components/InicioGerencia.vue';
 import PaginaError from './components/PaginaError.vue';
-import PaginaEnDesarrollo from './components/PaginaEnDesarrollo.vue';
+import PaginaInicio from './components/Inicio.vue';
+import PaginaEspecialidades from './components/PaginaEspecialidades.vue';
+import CreacionUsuarios from './components/CreacionUsuarios.vue';
+import GestionDepartamentos from './components/GestionDepartamentos.vue';
 import SaludoUsuario from './components/Saludo.vue';
-
-Vue.use(VueRouter);
+import InicioMedico from './components/InicioMedico.vue';
+import PruebasCodigo from './components/PruebasCodigo.vue';
+import GestionEncuestas from './components/GestionEncuestas.vue';
+import InicioPaciente from './components/InicioPaciente.vue';
+import InicioAdmision from './components/InicioAdministracion.vue';
+import "@/assets/styles.css";
+import PerfilUsuario from './components/PerfilUsuario.vue';
 
 const routes = [
-  {
-    path: '/',
-    name: 'Inicio',
-    component: PaginaInicio,
-  },
-  {
-    path: '/usuarios',
-    name: 'Usuarios',
-    component: CreacionUsuarios,
-  },
-  {
-    path: '/agenda-medico', 
-    name: 'PaginaEnDesarrollo',
-    component: PaginaEnDesarrollo,
-  },
-  {
-    path: '/departamentos',
-    name: 'GestionDepartamentos',
-    component: GestionDepartamentos,
-  },
-
-  {
-    path: '/login',
-    name: 'PaginaEnDesarrollo',
-    component: PaginaEnDesarrollo,
-  },
-  {
-    path: '/saludo',
-    name: 'SaludoUsuario',
-    component: SaludoUsuario,
-  },
-  {
-    path: '/aseguradoras',
-    name: 'PaginaEnDesarrollo',
-    component: PaginaEnDesarrollo,
-  },
-  {
-    path: '*', // Ruta comodín para capturar rutas no existentes
-    name: 'PaginaError',
-    component: PaginaError,
-  },
+  { path: '/', component: PaginaInicio },
+  { path: '/usuarios', component: CreacionUsuarios },
+  { path: '/saludo', component: SaludoUsuario },
+  { path: '/departamentos', component: GestionDepartamentos },
+  { path: '/equipo-medico', component: PaginaEquipoMedico },
+  { path: '/login', component: UserLogin },
+  { path: '/especialidades', component: PaginaEspecialidades },
+  { path: '/register', component: UserRegister },
+  { path: '/intranet', component: IntranetLogin },
+  { path: '/contacto', component: ContactForm },
+  { path: '/prestaciones', component: GestionPrestaciones },
+  { path: '/agenda-medico', component: AgendaMedico },
+  { path: '/recetas', component: GestionRecetas },
+  { path: '/lista_contacto', component: ListaFormContacto },
+  { path: '/reservarcitas', component: ReservarCitas },
+  { path: '/iniciogerencia', component: InicioGerencia },
+  { path: '/iniciomedico', component: InicioMedico },
+  { path: '/encuestas', component: GestionEncuestas },  
+  { path: '/pruebas', component: PruebasCodigo },
+  { path: '/iniciopaciente', component: InicioPaciente },
+  { path: '/iniciopaciente/perfil', component: PerfilUsuario },
+  { path: '/inicioadministracion', component: InicioAdmision },
+  { path: '/:pathMatch(.*)*', component: PaginaError }, // Updated catch-all route
 ];
 
-const router = new VueRouter({
-  mode: 'history',
+const router = createRouter({
+  history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  if (to.matched.some(record => record.meta.requiresAuth) && !token) {
+    next('/login');
+  } else {
+    next();
+  }
 });
 
 export default router;

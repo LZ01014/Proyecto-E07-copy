@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - dev_lihao
+  pull_request:
+    branches:
+      - main
+      - develop
+      - dev_lihao
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install dependencies for the App
+      run: |
+        npm install
+    
+    - name: Install dependencies for client
+      run: |
+        cd client
+        npm install
+
+    - name: Install dependencies for server
+      run: |
+        cd server
+        npm install
+
+    - name: Set environment variables
+      run: |
+        echo "MONGODB_URI=mongodb+srv://administrador:administracionULL@hospital.jyfis.mongodb.net/?retryWrites=true&w=majority&appName=Hospital" >> $GITHUB_ENV
+        echo "JWT_SECRET=ce143dc65674fee62bfa39f36800bb5f9cdc14f29034ffac6339009236668ea8" >> $GITHUB_ENV
+        echo "MONGODB_URI_TEST=mongodb+srv://admin:adminTester@cluster0.huenv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" >> $GITHUB_ENV
+
+
+    - name: Run client
+      run: |
+        cd client
+        npm run serve &
+      env:
+        NODE_ENV: test
+
+    - name: Run server
+      run: |
+        cd server
+        npm install -g nodemon
+        nodemon server.js &
+      env:
+        NODE_ENV: tests
