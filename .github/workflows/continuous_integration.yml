@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - develop
+      - dev_lihao
   pull_request:
     branches:
       - main
       - develop
+      - dev_lihao
 jobs:
   build:
     runs-on: ubuntu-latest
