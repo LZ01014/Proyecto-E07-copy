@@ -64,7 +64,6 @@ jobs:
             -Dsonar.projectKey=LZ01014_Proyecto-E07-copy
             -Dsonar.organization=lz01014
             -Dsonar.sources=.
-            -Dsonar.tests=.
             -Dsonar.verbose=true
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.*,**/coverage/**,**/build/**,*package*
             
