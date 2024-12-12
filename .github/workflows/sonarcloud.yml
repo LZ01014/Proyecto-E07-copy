@@ -66,6 +66,6 @@ jobs:
             -Dsonar.sources=.
             -Dsonar.tests=.
             -Dsonar.verbose=true
-            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.*,**/coverage/**,**/build/**,**/package.*
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.*,**/coverage/**,**/build/**,*package*
             
           
