@@ -51,18 +51,10 @@ jobs:
         echo "JWT_SECRET=ce143dc65674fee62bfa39f36800bb5f9cdc14f29034ffac6339009236668ea8" >> $GITHUB_ENV
         echo "MONGODB_URI_TEST=mongodb+srv://admin:adminTester@cluster0.huenv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" >> $GITHUB_ENV
 
-    - name: Test MongoDB Connection
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y gnupg wget
-        wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
-        echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
-        sudo apt-get update
-        sudo apt-get install -y mongodb-org-tools
-        export PATH=$PATH:/usr/bin
-        mongo ${{ secrets.MONGODB_URI }} --eval "db.runCommand({ connectionStatus: 1 })"
-
+    - name: Print environment variables
+      run: env
+      
     - name: Run tests
       run: |
         cd server
-        npm test -- --timeout 10000
+        npx mocha --timeout 10000
