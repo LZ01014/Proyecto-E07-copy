@@ -55,4 +55,6 @@ jobs:
       run: env
         
     - name: Run tests with coverage
-      run: npm test -- --timeout 10000 --reporter mocha-json --reporter-options output=coverage/coverage.json
+      run: |
+        cd server
+        npm test -- --timeout 10000 --reporter mocha-json --reporter-options output=coverage/coverage.json
