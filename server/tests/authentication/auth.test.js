@@ -38,6 +38,9 @@ const jwt = require('jsonwebtoken');
       console.log('After hook starting...');
       await Usuario.findByIdAndDelete(testUserId);
       console.log('After hook completed.');
+      console.log('Closing server...');
+      await server.close();
+      console.log('Server closed.');
     });
     
     it('should generate a JWT token on successful login', (done) => {
