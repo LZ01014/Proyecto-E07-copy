@@ -54,12 +54,13 @@ jobs:
     - name: Test MongoDB Connection
       run: |
         sudo apt-get update
-        sudo apt-get install -y gnupg
+        sudo apt-get install -y gnupg wget
         wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
         echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
         sudo apt-get update
         sudo apt-get install -y mongodb-org-tools
-        mongo ${{ secrets.MONGODB_URI_TEST }} --eval "db.runCommand({ connectionStatus: 1 })"
+        export PATH=$PATH:/usr/bin
+        mongo ${{ secrets.MONGODB_URI }} --eval "db.runCommand({ connectionStatus: 1 })"
 
     - name: Run tests
       run: |
