@@ -59,6 +59,8 @@ jobs:
             -Dsonar.organization=lz01014
             -Dsonar.sources=.
             -Dsonar.verbose=true
+            -Dsonar.tests=server/tests
+            -Dsonar.test.inclusions=**/*.test.js
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,**/build/**,*package*
             
           
