@@ -51,6 +51,11 @@ jobs:
         echo "JWT_SECRET=ce143dc65674fee62bfa39f36800bb5f9cdc14f29034ffac6339009236668ea8" >> $GITHUB_ENV
         echo "MONGODB_TEST_URI=mongodb+srv://admin:adminTester@cluster0.huenv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" >> $GITHUB_ENV
 
+    - name: Test MongoDB Connection
+      run: |
+        apt-get update && apt-get install -y mongodb-clients
+        mongo ${{ secrets.MONGODB_TEST_URI }} --eval "db.runCommand({ connectionStatus: 1 })"
+
     - name: Run tests
       run: |
         cd server
