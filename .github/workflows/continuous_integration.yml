@@ -29,7 +29,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '16'
+        node-version: '22'
 
     - name: Install dependencies for the App
       run: |
@@ -53,9 +53,14 @@ jobs:
 
     - name: Print environment variables
       run: env
-      
+
+    - name: List test files
+      run: |
+        ls -l server/tests
+        cd server/tests
+        find .
+        
     - name: Run tests
       run: |
         cd server
-        ls -l ./tests
         npm test -- --timeout 10000
