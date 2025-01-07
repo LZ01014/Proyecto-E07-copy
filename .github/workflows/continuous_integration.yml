@@ -49,7 +49,7 @@ jobs:
       run: |
         echo "MONGODB_URI=mongodb+srv://administrador:administracionULL@hospital.jyfis.mongodb.net/?retryWrites=true&w=majority&appName=Hospital" >> $GITHUB_ENV
         echo "JWT_SECRET=ce143dc65674fee62bfa39f36800bb5f9cdc14f29034ffac6339009236668ea8" >> $GITHUB_ENV
-        echo "MONGODB_URI_TEST=mongodb+srv://admin:adminTester@cluster0.huenv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" >> $GITHUB_ENV
+        echo "MONGODB_TEST_URI=mongodb+srv://admin:adminTester@cluster0.huenv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" >> $GITHUB_ENV
 
     - name: Run tests
       run: |
