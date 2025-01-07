@@ -54,13 +54,16 @@ jobs:
         with:
           # Additional arguments for the SonarScanner CLI
           
-          args: >
-            -Dsonar.projectKey=LZ01014_Proyecto-E07-copy
-            -Dsonar.organization=lz01014
-            -Dsonar.sources=.
-            -Dsonar.verbose=true
-            -Dsonar.tests=server/tests
-            -Dsonar.test.inclusions=**/*.test.js
-            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,**/build/**,*package*
+         args: >
+          -Dsonar.projectKey=LZ01014_Proyecto-E07-copy
+          -Dsonar.organization=lz01014
+          -Dsonar.sources=.
+          -Dsonar.verbose=true
+          -Dsonar.tests=server/tests
+          -Dsonar.test.inclusions=**/*.test.js
+          -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,**/build/**,*package*
+          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+          -Dsonar.coverage.exclusions=**/node_modules/**,**/dist/**,**/coverage/**
+
             
           
