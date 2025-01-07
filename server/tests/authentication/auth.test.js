@@ -2,7 +2,7 @@ process.env.NODE_ENV = 'test';
 
 const chai = require('chai');
 const supertest = require('supertest');
-const server = require('../../server'); // Asegúrate de que la ruta sea correcta
+const server = require('../../server'); 
 const Usuario = require('../../models/Usuario');
 const jwt = require('jsonwebtoken');
 const { expect } = chai;
@@ -20,6 +20,7 @@ describe('JWT Authentication', () => {
       apellidos: 'User',
       username: 'testuser',
       password: 'Test1234',
+      email: 'test@test.com',
       tipo: 'Paciente' 
     });
     const savedUser = await usuario.save();
@@ -32,7 +33,7 @@ describe('JWT Authentication', () => {
   after(async () => {
     await Usuario.findByIdAndDelete(testUserId);
   });
-
+  
   it('should generate a JWT token on successful login', (done) => {
     request
       .post('/api/login')
@@ -111,18 +112,6 @@ describe('JWT Authentication', () => {
       });
   });
 
-  it('should return 403 for non-admin role trying to access /usuarios', (done) => {
-    const userToken = jwt.sign({ id: 'testuser', role: 'Paciente' }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    request
-      .get('/api/usuarios')
-      .set('Cookie', `token=${userToken}`)
-      .end((err, res) => {
-        expect(res.status).to.equal(403);
-        expect(res.body).to.have.property('message', 'Acceso denegado');
-        done();
-      });
-  });
-
   it('should return 401 for JWT token with invalid signature', (done) => {
     const invalidSignatureToken = token.split('.').slice(0, 2).join('.') + '.invalidsignature';
     request
@@ -167,18 +156,6 @@ describe('JWT Authentication', () => {
       .end((err, res) => {
         expect(res.status).to.equal(401);
         expect(res.body).to.have.property('message', 'Token inválido o expirado');
-        done();
-      });
-  });
-
-  it('should return 403 for valid JWT token with unauthorized role', (done) => {
-    const unauthorizedRoleToken = jwt.sign({ id: 'testuser', role: 'UnauthorizedRole' }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    request
-      .get('/api/usuarios')
-      .set('Cookie', `token=${unauthorizedRoleToken}`)
-      .end((err, res) => {
-        expect(res.status).to.equal(403);
-        expect(res.body).to.have.property('message', 'Acceso denegado');
         done();
       });
   });

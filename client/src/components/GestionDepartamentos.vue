@@ -2,7 +2,7 @@
   <div class="contenedor-principal">
     <!-- Columna izquierda: Formulario de creación de departamentos -->
     <div class="columna-formulario">
-      <h2>Gestión de Departamentos</h2>
+      <h2>Gestión de Departamentos / Especialidades</h2>
 
       <!-- Formulario para crear o editar un departamento -->
       <form @submit.prevent="editarDepartamentoId ? actualizarDepartamento() : crearDepartamento()">

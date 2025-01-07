@@ -104,7 +104,6 @@ router.get('/usuarios', async (req, res) => {
     res.status(500).json({ message: 'Error al obtener usuarios', error });
   }
 });
-
 // Ruta para crear un usuario, incluyendo la carga de imagen
 router.post('/usuarios', validateRegister, async (req, res) => {
   try {
@@ -112,7 +111,15 @@ router.post('/usuarios', validateRegister, async (req, res) => {
       req.body.departamento = null;
     }
 
-    req.body.username = await generarUsername(req.body.nombre, req.body.apellidos);
+    if (!req.body.username || req.body.username.trim() === '') {
+      req.body.username = await generarUsername(req.body.nombre, req.body.apellidos);
+    }
+
+    const existingUser = await Usuario.findOne({ username: req.body.username });
+    if (existingUser) {
+      return res.status(409).json({ message: 'El nombre de usuario ya está en uso' });
+    }
+
     const usuarioData = { ...req.body };
     const usuario = new Usuario(usuarioData);
     await usuario.save();
@@ -142,17 +149,16 @@ router.put('/usuarios/:id', async (req, res) => {
     const usuarioData = { ...req.body };
 
     // Si se está actualizando la contraseña, encriptarla antes de guardarla
-    if (usuarioData.password) {
+    if (usuarioData.password && usuarioData.password.trim() !== '') {
       const salt = await bcrypt.genSalt(10);
       usuarioData.password = await bcrypt.hash(usuarioData.password, salt);
+    } else {
+      delete usuarioData.password;
     }
 
     if (!usuarioData.departamento) {
       delete usuarioData.departamento;
     }
-
-    console.log('ID del usuario:', req.params.id);
-    console.log('Datos del usuario recibidos:', req.body);
 
     const usuario = await Usuario.findByIdAndUpdate(req.params.id, usuarioData, {
       new: true,
@@ -203,7 +209,16 @@ router.get('/usuarios/medicos', async (req, res) => {
 
 router.get('/usuarios/pacientes', async (req, res) => {
   try {
-    const pacientes = await Usuario.find({ tipo: 'Paciente' });
+    const search = req.query.search;
+    const regex = new RegExp(search, 'i'); // 'i' para búsqueda insensible a mayúsculas/minúsculas
+    const pacientes = await Usuario.find({
+      tipo: 'Paciente',
+      $or: [
+        { nombre: regex },
+        { apellidos: regex },
+        { dni: regex }
+      ]
+    });
     res.status(200).json(pacientes);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener pacientes', error });

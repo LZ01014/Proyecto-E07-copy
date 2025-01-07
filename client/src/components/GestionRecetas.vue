@@ -1,236 +1,226 @@
 <template>
-    <div class="contenedor-principal">
-      <!-- Columna izquierda: Formulario de creación de recetas -->
-      <div class="columna-formulario">
-        <h2>Gestión de Recetas</h2>
-  
-        <!-- Formulario para crear o editar una receta -->
-        <form @submit.prevent="editarRecetaId ? actualizarReceta() : crearReceta()">
-            <img v-if="fotoPreview" :src="fotoPreview" alt="Previsualización de Foto de Perfil" class="foto-preview"/>
+  <div class="contenedor-principal">
+    <!-- Columna izquierda: Formulario de creación de recetas -->
+    <div class="columna-formulario">
+      <h2>Gestión de Recetas</h2>
 
-          <label> Médico:
-            <select v-model="nuevaReceta.medicoId" required>
-              <option disabled value="">Seleccione un médico</option>
-              <option v-for="medico in medicos" :key="medico._id" :value="medico._id"> {{ medico.nombre }} {{ medico.apellidos }}</option>
-            </select>
-          </label>
+      <!-- Formulario para crear o editar una receta -->
+      <form @submit.prevent="editarRecetaId ? actualizarReceta() : crearReceta()">
+        <img v-if="fotoPreview" :src="fotoPreview" alt="Previsualización de Foto de Perfil" class="foto-preview"/>
 
-          <label> Paciente:
-            <select v-model="nuevaReceta.pacienteId" required>
-              <option disabled value="">Seleccione un paciente</option>
-              <option v-for="paciente in pacientes" :key="paciente._id" :value="paciente._id"> {{ paciente.nombre }} {{ paciente.apellidos }}</option>
-            </select>
-          </label>
-          <!-- Selección de Fecha -->
-          <label>Fecha:
-            <input type="date" v-model="nuevaReceta.fecha" required />
-          </label>
-          <!-- Selección de Hora -->
-          <label>Hora:
-            <input type="time" v-model="nuevaReceta.hora" required />
-          </label>
-          <!-- Campo de Indicaciones -->
-          <label>Medicamentos:
-            <textarea v-model="nuevaReceta.medicamentos" class="textarea-azul"></textarea>
-          </label>
-          <!-- Campo de Observaciones -->
-          <label>Observaciones:
-            <textarea v-model="nuevaReceta.observaciones" class="textarea-azul"></textarea>
-          </label>
-          <!-- Botones de acción para crear o actualizar la receta -->
-          <v-btn class="ma-2 boton-crear" type="submit" v-if="!editarRecetaId">
-            Crear Receta
-          </v-btn>
-          <v-btn class="ma-2 boton-guardar" type="button" v-if="editarRecetaId" @click="actualizarReceta">
-            Guardar Cambios
-          </v-btn>
-          <v-btn class="ma-2 boton-cancelar" type="button" v-if="editarRecetaId" @click="cancelarEdicion">
-            Cancelar
-          </v-btn>
-        </form>
-      </div>
-  
-      <!-- Columna derecha: Lista de recetas -->
-      <div class="columna-lista">
-        <h3>Listado de Recetas</h3>
-  
-        <!-- Indicador de error y carga -->
-        <v-alert
-          v-if="errorServidor"
-          type="error"
-          class="alerta-error"
-          prominent
-          color="red lighten-3"
-        >
-          <span class="alert-text">Fallo de comunicación con el servidor</span>
-        </v-alert>
-  
-        <div v-if="cargando && !errorServidor" class="text-center">
-          <v-progress-circular
-            :size="70"
-            :width="7"
-            color="#17195e"
-            indeterminate
-          ></v-progress-circular>
-        </div>
-  
-        <div v-if="!cargando && !errorServidor && recetas.length === 0" class="texto-centrado">
-          <p>La lista está vacía</p>
-        </div>
-  
-        <!-- Tabla de recetas -->
-        <table class="department-table" v-if="recetas.length !== 0">
-  <thead>
-    <tr>
-      <th></th>
-      <th>Médico</th>
-      <th>Paciente</th>
-      <th>Fecha</th>
-      <th>Hora</th>
-      <th>Medicamentos</th>
-      <th>Observaciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr v-for="receta in recetas" :key="receta._id" >
-      <td class="department-actions">
-        <div class="action-buttons">
-          <v-btn class="boton-modificar" @click="cargarReceta(receta)">
-            <i class="bi bi-pencil-square"></i>
-          </v-btn>
-          <v-btn class="boton-eliminar" @click="confirmarEliminacion(receta._id, receta.numero)">
-            <i class="bi bi-trash"></i>
-          </v-btn>
-        </div>
-      </td>
-      <td>{{ receta.medicoId.nombre }} {{ receta.medicoId.apellidos }}</td>
-      <td>{{ receta.pacienteId.nombre }} {{ receta.pacienteId.apellidos }}</td>
-      <td>{{ receta.fecha }}</td>
-      <td>{{ receta.hora }}</td>
-      <td>{{ receta.medicamentos }}</td>
-      <td>{{ receta.observaciones }}</td>
-    </tr>
-  </tbody>
-</table>
+        <label> Médico:
+          <select v-model="nuevaReceta.medicoId" required>
+            <option disabled value="">Seleccione un médico</option>
+            <option v-for="medico in medicos" :key="medico._id" :value="medico._id"> {{ medico.nombre }} {{ medico.apellidos }}</option>
+          </select>
+        </label>
 
-      </div>
+        <label> Paciente:
+          <select v-model="nuevaReceta.pacienteId" required>
+            <option disabled value="">Seleccione un paciente</option>
+            <option v-for="paciente in pacientes" :key="paciente._id" :value="paciente._id"> {{ paciente.nombre }} {{ paciente.apellidos }}</option>
+          </select>
+        </label>
+        <!-- Selección de Fecha -->
+        <label>Fecha:
+          <input type="date" v-model="nuevaReceta.fecha" required />
+        </label>
+        <!-- Selección de Hora -->
+        <label>Hora:
+          <input type="time" v-model="nuevaReceta.hora" required />
+        </label>
+        <!-- Campo de Indicaciones -->
+        <label>Medicamentos:
+          <textarea v-model="nuevaReceta.medicamentos" class="textarea-azul"></textarea>
+        </label>
+        <!-- Campo de Observaciones -->
+        <label>Observaciones:
+          <textarea v-model="nuevaReceta.observaciones" class="textarea-azul"></textarea>
+        </label>
+        <!-- Botones de acción para crear o actualizar la receta -->
+        <v-btn class="ma-2 boton-crear" type="submit" v-if="!editarRecetaId">
+          Crear Receta
+        </v-btn>
+        <v-btn class="ma-2 boton-guardar" type="button" v-if="editarRecetaId" @click="actualizarReceta">
+          Guardar Cambios
+        </v-btn>
+        <v-btn class="ma-2 boton-cancelar" type="button" v-if="editarRecetaId" @click="cancelarEdicion">
+          Cancelar
+        </v-btn>
+      </form>
     </div>
-  </template>
-  
-  <script>
-  import apiClient from '@/apiClient';
-  
-  export default {
-    name: 'GestionRecetas',
-    data() {
-      return {
-        recetas: [],
-        nuevaReceta: {
-          medicoId: '',
-          pacienteId: '',
-          fecha: '',
-          hora: '',
-          medicamentos: '',
-          observaciones: ''
-        },
-        medicos: [], // Lista de médicos
-        pacientes: [], // Lista de pacientes
-        fotoPreview: require('@/assets/estados/especialidad_defecto.png'),
-        editarRecetaId: null,
-        cargando: false,
-        errorServidor: false
-      };
-    },
-    methods: {
-      async obtenerRecetas() {
-        this.cargando = true;
-        try {
-          const response = await apiClient.get('/api/recetas');
-          this.recetas = response.data;
-        } catch (error) {
-          this.errorServidor = true;
-        } finally {
-          this.cargando = false;
-        }
-      },
-    
-      async obtenerMedicos() {
-        try {
-          const response = await apiClient.get('/api/usuarios/medicos');
-          this.medicos = response.data;
-        } catch (error) {
-          console.error('Error al obtener médicos:', error);
-          this.errorServidor = true;
-        }
-      },
-      async obtenerPacientes() {
-        try {
-          const response = await apiClient.get('/api/usuarios/pacientes');
-          this.pacientes = response.data;
-        } catch (error) {
-          console.error('Error al obtener pacientes:', error);
-          this.errorServidor = true;
-        }
-      },
 
-      async crearReceta() {
-        try {
-          await apiClient.post('/api/recetas', this.nuevaReceta);
-          this.obtenerRecetas();
-          this.resetFormulario();
-        } catch (error) {
-          console.error('Error al crear receta:', error);
-        }
-      },
+    <!-- Columna derecha: Lista de recetas -->
+    <div class="columna-lista">
+      <h3>Listado de Recetas</h3>
 
-      cargarReceta(receta) {
-        this.nuevaReceta = { ...receta };
-        this.editarRecetaId = receta._id;
-      },
+      <!-- Indicador de error y carga -->
+      <v-alert
+        v-if="errorServidor"
+        type="error"
+        class="alerta-error"
+        prominent
+        color="red lighten-3"
+      >
+        <span class="alert-text">Fallo de comunicación con el servidor</span>
+      </v-alert>
 
-      async actualizarReceta() {
-        try {
-          await apiClient.put(`/api/recetas/${this.editarRecetaId}`, this.nuevaReceta);
-          this.obtenerRecetas();
-          this.resetFormulario();
-        } catch (error) {
-          console.error('Error al actualizar receta:', error);
-        }
-      },
-      
-      cancelarEdicion() {
-        this.resetFormulario();
-      },
+      <div v-if="cargando && !errorServidor" class="text-center">
+        <v-progress-circular
+          :size="70"
+          :width="7"
+          color="#17195e"
+          indeterminate
+        ></v-progress-circular>
+      </div>
 
-      confirmarEliminacion(id, numero) {
-        const confirmacion = window.confirm(`¿Está seguro de que desea eliminar la receta ${numero}?`);
-        if (confirmacion) {
-          this.eliminarReceta(id);
-        }
+      <div v-if="!cargando && !errorServidor && recetas.length === 0" class="texto-centrado">
+        <p>La lista está vacía</p>
+      </div>
+
+      <!-- Tabla de recetas -->
+      <table class="department-table" v-if="recetas.length !== 0">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Médico</th>
+            <th>Paciente</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Medicamentos</th>
+            <th>Observaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="receta in recetas" :key="receta._id">
+            <td class="department-actions">
+              <div class="action-buttons">
+                <v-btn class="boton-modificar" @click="cargarReceta(receta)">
+                  <i class="bi bi-pencil-square"></i>
+                </v-btn>
+                <v-btn class="boton-eliminar" @click="confirmarEliminacion(receta._id, receta.numero)">
+                  <i class="bi bi-trash"></i>
+                </v-btn>
+              </div>
+            </td>
+            <td>{{ receta.medicoId?.nombre }} {{ receta.medicoId?.apellidos }}</td>
+            <td>{{ receta.pacienteId?.nombre }} {{ receta.pacienteId?.apellidos }}</td>
+            <td>{{ receta.fecha }}</td>
+            <td>{{ receta.hora }}</td>
+            <td>{{ receta.medicamentos }}</td>
+            <td>{{ receta.observaciones }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<script>
+import apiClient from '@/apiClient';
+
+export default {
+  name: 'GestionRecetas',
+  data() {
+    return {
+      recetas: [],
+      nuevaReceta: {
+        medicoId: '',
+        pacienteId: '',
+        fecha: '',
+        hora: '',
+        medicamentos: '',
+        observaciones: ''
       },
-      async eliminarReceta(id) {
-        try {
-          await apiClient.delete(`/api/recetas/${id}`);
-          this.obtenerRecetas();
-        } catch (error) {
-          console.error('Error al eliminar receta:', error);
-        }
-      },
-      resetFormulario() {
-        this.nuevaReceta = { medicoId: '', pacienteId: '', fecha: '', hora: '', medicamentos: '', observaciones: '' };
-        this.editarRecetaId = null;
+      medicos: [], // Lista de médicos
+      pacientes: [], // Lista de pacientes
+      fotoPreview: require('@/assets/estados/especialidad_defecto.png'),
+      editarRecetaId: null,
+      cargando: false,
+      errorServidor: false
+    };
+  },
+  methods: {
+    async obtenerRecetas() {
+      this.cargando = true;
+      try {
+        const response = await apiClient.get('/api/recetas');
+        this.recetas = response.data;
+      } catch (error) {
+        this.errorServidor = true;
+      } finally {
+        this.cargando = false;
       }
-      
     },
-    
-
-    mounted() {
-      this.obtenerMedicos();
-      this.obtenerPacientes();
-      this.obtenerRecetas();
+    async obtenerMedicos() {
+      try {
+        const response = await apiClient.get('/api/usuarios/medicos');
+        this.medicos = response.data;
+      } catch (error) {
+        console.error('Error al obtener médicos:', error);
+        this.errorServidor = true;
+      }
+    },
+    async obtenerPacientes() {
+      try {
+        const response = await apiClient.get('/api/usuarios/pacientes');
+        this.pacientes = response.data;
+      } catch (error) {
+        console.error('Error al obtener pacientes:', error);
+        this.errorServidor = true;
+      }
+    },
+    async crearReceta() {
+      try {
+        await apiClient.post('/api/recetas', this.nuevaReceta);
+        this.obtenerRecetas();
+        this.resetFormulario();
+      } catch (error) {
+        console.error('Error al crear receta:', error);
+      }
+    },
+    cargarReceta(receta) {
+      this.nuevaReceta = { ...receta };
+      this.editarRecetaId = receta._id;
+    },
+    async actualizarReceta() {
+      try {
+        await apiClient.put(`/api/recetas/${this.editarRecetaId}`, this.nuevaReceta);
+        this.obtenerRecetas();
+        this.resetFormulario();
+      } catch (error) {
+        console.error('Error al actualizar receta:', error);
+      }
+    },
+    cancelarEdicion() {
+      this.resetFormulario();
+    },
+    confirmarEliminacion(id, numero) {
+      const confirmacion = window.confirm(`¿Está seguro de que desea eliminar la receta ${numero}?`);
+      if (confirmacion) {
+        this.eliminarReceta(id);
+      }
+    },
+    async eliminarReceta(id) {
+      try {
+        await apiClient.delete(`/api/recetas/${id}`);
+        this.obtenerRecetas();
+      } catch (error) {
+        console.error('Error al eliminar receta:', error);
+      }
+    },
+    resetFormulario() {
+      this.nuevaReceta = { medicoId: '', pacienteId: '', fecha: '', hora: '', medicamentos: '', observaciones: '' };
+      this.editarRecetaId = null;
     }
-  };
-  </script>
+  },
+  mounted() {
+    this.obtenerMedicos();
+    this.obtenerPacientes();
+    this.obtenerRecetas();
+  }
+};
+</script>
   
   <style scoped>
   /* Contenedor principal para organizar formulario y lista en columnas */

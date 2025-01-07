@@ -37,7 +37,7 @@
             v-model="nuevoUsuario.password"
             required
             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$"
-            @input="validatePassword"
+            @input="handlePasswordChange"
             @blur="validateRequired($event, 'Debe tener al menos 6 caracteres, incluyendo 1 mayúscula, 1 minúscula y 1 número.')"
             @invalid="setCustomMessage($event, 'Debe tener al menos 6 caracteres, incluyendo 1 mayúscula, 1 minúscula y 1 número.')"
           />
@@ -49,6 +49,7 @@
             <option value="Administración">Administración</option>
             <option value="Paciente">Paciente</option>
             <option value="Médico">Médico</option>
+            <option value="Gerencia">Gerencia</option>
           </select>
         </label>
 
@@ -58,7 +59,6 @@
             <option v-for="dep in departamentosDisponibles" :key="dep._id" :value="dep._id">{{ dep.nombre }}</option>
           </select>
         </label>
-
 
         <!-- Campos opcionales -->
         <label>DNI:
@@ -122,6 +122,7 @@
           <option value="Administración">Administración</option>
           <option value="Paciente">Paciente</option>
           <option value="Médico">Médico</option>
+          <option value="Gerencia">Gerencia</option>
         </select>
       </div>
       
@@ -153,35 +154,34 @@
 
       <!-- Tabla de usuarios -->
       <table v-if="!cargando && !errorServidor && usuariosFiltrados.length > 0" class="user-table">
-  <thead>
-    <tr>
-      <th></th>
-      <th>Nombre</th>
-      <th>Username</th>
-      <th>Tipo de usuario</th>
-      <th>Departamento</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr v-for="usuario in usuariosFiltrados" :key="usuario._id">
-      <td class="user-actions">
-        <v-btn class="boton-modificar" @click="cargarUsuario(usuario)">
-          <i class="bi bi-pencil-square"></i>
-        </v-btn>
-        <v-btn class="boton-eliminar" @click="confirmarEliminacion(usuario._id, usuario.nombre)">
-          <i class="bi bi-trash"></i>
-        </v-btn>
-      </td>
-      <td>{{ usuario.nombre }} {{ usuario.apellidos }}</td>
-      <td>{{ usuario.username }}</td>
-      <td>{{ usuario.tipo }}</td>
-      <td>{{ obtenerNombreDepartamento(usuario.departamento) }}</td>
-
-    </tr>
-  </tbody>
-</table>
-      </div>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Nombre</th>
+            <th>Username</th>
+            <th>Tipo de usuario</th>
+            <th>Departamento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="usuario in usuariosFiltrados" :key="usuario._id">
+            <td class="user-actions">
+              <v-btn class="boton-modificar" @click="cargarUsuario(usuario)">
+                <i class="bi bi-pencil-square"></i>
+              </v-btn>
+              <v-btn class="boton-eliminar" @click="confirmarEliminacion(usuario._id, usuario.nombre)">
+                <i class="bi bi-trash"></i>
+              </v-btn>
+            </td>
+            <td>{{ usuario.nombre }} {{ usuario.apellidos }}</td>
+            <td>{{ usuario.username }}</td>
+            <td>{{ usuario.tipo }}</td>
+            <td>{{ obtenerNombreDepartamento(usuario.departamento) }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 </template>
 
 <script>
@@ -212,6 +212,7 @@ export default {
       todosDepartamentos: [], // Todos los departamentos cargados una vez
       cargando: false, // Estado de carga
       errorServidor: false, // Estado de error
+      passwordChanged: false, // Nueva propiedad para rastrear cambios en la contraseña
     };
   },
   computed: {
@@ -223,161 +224,161 @@ export default {
     },
   },
   methods: {
-  async obtenerUsuarios() {
-    this.cargando = true;
-    this.errorServidor = false;
-    try {
-      const response = await apiClient.get('/api/usuarios');
-      this.usuarios = response.data;
-      
-      // Llama a obtenerDepartamentos() cada vez que se actualizan los usuarios
-      await this.obtenerDepartamentos();
-    } catch (error) {
-      console.error('Error al obtener usuarios:', error);
-      this.errorServidor = true;
-    } finally {
-      this.cargando = false;
-    }
-  },
+    async obtenerUsuarios() {
+      this.cargando = true;
+      this.errorServidor = false;
+      try {
+        const response = await apiClient.get('/api/usuarios');
+        this.usuarios = response.data;
+        
+        // Llama a obtenerDepartamentos() cada vez que se actualizan los usuarios
+        await this.obtenerDepartamentos();
+      } catch (error) {
+        console.error('Error al obtener usuarios:', error);
+        this.errorServidor = true;
+      } finally {
+        this.cargando = false;
+      }
+    },
 
-  async obtenerDepartamentos() {
-    try {
-      const response = await apiClient.get('/api/departamentos');
-      this.todosDepartamentos = response.data; // Guardar todos los departamentos
-      console.log("Departamentos cargados:", this.todosDepartamentos);
-      this.actualizarOpcionesDepartamento(); // Aplicar filtro inicial
-    } catch (error) {
-      console.error('Error al obtener departamentos:', error);
-    }
-  },
-  obtenerNombreDepartamento(departamentoId) {
-    const departamento = this.todosDepartamentos.find(dep => dep._id === departamentoId);
-    return departamento ? departamento.nombre : '';
-  },
-  filtrarUsuarios() {
-    // Este método se llama cuando se cambia el filtro, pero el cálculo se realiza en `usuariosFiltrados`
-  },
-  async actualizarOpcionesDepartamento() {
-    if (this.nuevoUsuario.tipo === 'Médico') {
-      // Filtrar solo departamentos de "Especialidad médica" para el tipo "Médico"
-      this.departamentosDisponibles = this.todosDepartamentos.filter(
-        dep => dep.tipo === 'Especialidad médica'
-      );
-    } else if (this.nuevoUsuario.tipo === 'Administración') {
-      // Filtrar solo departamentos de "Administración" para el tipo "Administración"
-      this.departamentosDisponibles = this.todosDepartamentos.filter(
-        dep => dep.tipo === 'Administración'
-      );
-    } else {
-      // Si el tipo es otro (por ejemplo, "Paciente"), limpiar las opciones
-      this.departamentosDisponibles = [];
-      this.nuevoUsuario.departamento = '';
-    }
+    async obtenerDepartamentos() {
+      try {
+        const response = await apiClient.get('/api/departamentos');
+        this.todosDepartamentos = response.data; // Guardar todos los departamentos
+        console.log("Departamentos cargados:", this.todosDepartamentos);
+        this.actualizarOpcionesDepartamento(); // Aplicar filtro inicial
+      } catch (error) {
+        console.error('Error al obtener departamentos:', error);
+      }
+    },
+    obtenerNombreDepartamento(departamentoId) {
+      const departamento = this.todosDepartamentos.find(dep => dep._id === departamentoId);
+      return departamento ? departamento.nombre : '';
+    },
+    filtrarUsuarios() {
+      // Este método se llama cuando se cambia el filtro, pero el cálculo se realiza en `usuariosFiltrados`
+    },
+    async actualizarOpcionesDepartamento() {
+      if (this.nuevoUsuario.tipo === 'Médico') {
+        // Filtrar solo departamentos de "Especialidad médica" para el tipo "Médico"
+        this.departamentosDisponibles = this.todosDepartamentos.filter(
+          dep => dep.tipo === 'Especialidad médica'
+        );
+      } else if (this.nuevoUsuario.tipo === 'Administración') {
+        // Filtrar solo departamentos de "Administración" para el tipo "Administración"
+        this.departamentosDisponibles = this.todosDepartamentos.filter(
+          dep => dep.tipo === 'Administración'
+        );
+      } else {
+        // Si el tipo es otro (por ejemplo, "Paciente"), limpiar las opciones
+        this.departamentosDisponibles = [];
+        this.nuevoUsuario.departamento = '';
+      }
 
-    // Mantener el departamento seleccionado si existe en la lista filtrada
-    if (
-      this.nuevoUsuario.departamento &&
-      !this.departamentosDisponibles.find(dep => dep._id === this.nuevoUsuario.departamento)
-    ) {
-      this.nuevoUsuario.departamento = '';
-    }
-  },
-  async crearUsuario() {
-    const formData = new FormData();
-    formData.append('nombre', this.nuevoUsuario.nombre);
-    formData.append('apellidos', this.nuevoUsuario.apellidos);
-    formData.append('username', this.nuevoUsuario.username);
-    formData.append('password', this.nuevoUsuario.password);
-    formData.append('tipo', this.nuevoUsuario.tipo);
-    formData.append('departamento', this.nuevoUsuario.departamento);
-    formData.append('dni', this.nuevoUsuario.dni);
-    formData.append('fechaNacimiento', this.nuevoUsuario.fechaNacimiento);
-    formData.append('genero', this.nuevoUsuario.genero);
-    formData.append('direccion', this.nuevoUsuario.direccion);
-    formData.append('telefono', this.nuevoUsuario.telefono);
-    formData.append('email', this.nuevoUsuario.email);
+      // Mantener el departamento seleccionado si existe en la lista filtrada
+      if (
+        this.nuevoUsuario.departamento &&
+        !this.departamentosDisponibles.find(dep => dep._id === this.nuevoUsuario.departamento)
+      ) {
+        this.nuevoUsuario.departamento = '';
+      }
+    },
+    async crearUsuario() {
+      const formData = new FormData();
+      formData.append('nombre', this.nuevoUsuario.nombre);
+      formData.append('apellidos', this.nuevoUsuario.apellidos);
+      formData.append('username', this.nuevoUsuario.username);
+      formData.append('password', this.nuevoUsuario.password);
+      formData.append('tipo', this.nuevoUsuario.tipo);
+      formData.append('departamento', this.nuevoUsuario.departamento);
+      formData.append('dni', this.nuevoUsuario.dni);
+      formData.append('fechaNacimiento', this.nuevoUsuario.fechaNacimiento);
+      formData.append('genero', this.nuevoUsuario.genero);
+      formData.append('direccion', this.nuevoUsuario.direccion);
+      formData.append('telefono', this.nuevoUsuario.telefono);
+      formData.append('email', this.nuevoUsuario.email);
 
-    // Revisa los valores en formData
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
+      // Revisa los valores en formData
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
 
-    try {
-      await apiClient.post('/api/usuarios', formData);
-      this.obtenerUsuarios();
+      try {
+        await apiClient.post('/api/usuarios', formData);
+        this.obtenerUsuarios();
+        this.resetFormulario();
+      } catch (error) {
+        console.error('Error al crear usuario:', error);
+      }
+    },
+    resetFormulario() {
+      this.nuevoUsuario = {
+        nombre: '',
+        apellidos: '',
+        username: '',
+        password: '',
+        tipo: '',
+        departamento: '',
+        dni: '',
+        fechaNacimiento: '',
+        genero: '',
+        direccion: '',
+        telefono: '',
+        email: ''
+      };
+      this.fotoPreview = require('@/assets/estados/perfil_defecto.png');
+      this.editarUsuarioId = null; // Salir del modo de edición
+      this.passwordChanged = false; // Restablecer el indicador de cambio de contraseña
+    }, 
+    cargarUsuario(usuario) {
+      this.nuevoUsuario = { ...usuario };
+      this.editarUsuarioId = usuario._id;
+      this.actualizarOpcionesDepartamento(); 
+    },
+    confirmarEliminacion(id, nombre) {
+      const confirmacion = window.confirm(`¿Está seguro de que desea eliminar el usuario ${nombre}?`);
+      if (confirmacion) {
+        this.eliminarUsuario(id);
+      }
+    },
+    async eliminarUsuario(id) {
+      try {
+        await apiClient.delete(`/api/usuarios/${id}`);
+        this.obtenerUsuarios();
+      } catch (error) {
+        console.error('Error al eliminar usuario:', error);
+      }
+    },
+    async actualizarUsuario() {
+      // Crear una copia del objeto nuevoUsuario
+      const usuarioActualizado = { ...this.nuevoUsuario };
+      console.log("Actualizando usuario:", usuarioActualizado);
+
+      // Solo incluir la contraseña si ha sido modificada
+      if (!this.passwordChanged || !usuarioActualizado.password.trim()) {
+        delete usuarioActualizado.password;
+      }
+
+      try {
+        await apiClient.put(`/api/usuarios/${this.editarUsuarioId}`, usuarioActualizado, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        await this.obtenerUsuarios(); // Recargar la lista de usuarios
+        this.resetFormulario(); // Resetear el formulario después de la edición
+      } catch (error) {
+        console.error('Error al actualizar usuario:', error);
+      }
+    },
+    cancelarEdicion() {
       this.resetFormulario();
-    } catch (error) {
-      console.error('Error al crear usuario:', error);
-    }
-  },
-  resetFormulario() {
-    this.nuevoUsuario = {
-      nombre: '',
-      apellidos: '',
-      username: '',
-      password: '',
-      tipo: '',
-      departamento: '',
-      dni: '',
-      fechaNacimiento: '',
-      genero: '',
-      direccion: '',
-      telefono: '',
-      email: ''
-    };
-    this.fotoPreview = require('@/assets/estados/perfil_defecto.png');
-    this.editarUsuarioId = null; // Salir del modo de edición
-  }, 
-  cargarUsuario(usuario) {
-    this.nuevoUsuario = { ...usuario };
-    this.editarUsuarioId = usuario._id;
-    this.actualizarOpcionesDepartamento(); 
-  },
-  confirmarEliminacion(id, nombre) {
-    const confirmacion = window.confirm(`¿Está seguro de que desea eliminar el usuario ${nombre}?`);
-    if (confirmacion) {
-      this.eliminarUsuario(id);
-    }
-  },
-  async eliminarUsuario(id) {
-    try {
-      await apiClient.delete(`/api/usuarios/${id}`);
-      this.obtenerUsuarios();
-    } catch (error) {
-      console.error('Error al eliminar usuario:', error);
-    }
-  },
-  async actualizarUsuario() {
-    const formData = new FormData();
-    formData.append('nombre', this.nuevoUsuario.nombre);
-    formData.append('apellidos', this.nuevoUsuario.apellidos);
-    formData.append('username', this.nuevoUsuario.username);
-    formData.append('password', this.nuevoUsuario.password);
-    formData.append('tipo', this.nuevoUsuario.tipo);
-    formData.append('departamento', this.nuevoUsuario.departamento);
-    formData.append('dni', this.nuevoUsuario.dni);
-    formData.append('genero', this.nuevoUsuario.genero);
-    formData.append('direccion', this.nuevoUsuario.direccion);
-    formData.append('telefono', this.nuevoUsuario.telefono);
-    formData.append('email', this.nuevoUsuario.email);
-
-    try {
-      // Enviar los datos directamente como JSON, no como FormData
-      await apiClient.put(`/api/usuarios/${this.editarUsuarioId}`, this.nuevoUsuario, {
-        headers: {
-          'Content-Type': 'application/json', // Asegúrate de usar JSON
-        },
-      });
-      await this.obtenerUsuarios(); // Recargar la lista de usuarios
-      this.resetFormulario(); // Resetear el formulario después de la edición
-    } catch (error) {
-      console.error('Error al actualizar usuario:', error);
-    }
-  },
-  cancelarEdicion() {
-    this.resetFormulario();
-  },
-  setCustomMessage(event, message) {
+    },
+    handlePasswordChange(event) {
+      this.passwordChanged = true;
+      this.nuevoUsuario.password = event.target.value;
+    },
+    setCustomMessage(event, message) {
       if (!event.target.value) {
         event.target.setCustomValidity('Este campo es obligatorio');
       } else {

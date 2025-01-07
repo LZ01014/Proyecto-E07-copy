@@ -1,14 +1,8 @@
 <template>
-  <div class="estilo-pagina">
-    <header class="header">
-      <img src="@/assets/logo.png" alt="Hospital Rambla" class="logo" />
-      <div class="vertical-line"></div>
-      <h1 class="left-align small-text">INTRANET</h1>
-
-      <div class="reloj">
-      <span>{{ horaActual }}</span>
-    </div>
-    </header>
+  <div>
+  
+    <Header/>
+    <div class="estilo-pagina">
     <br>
     <br>  
     <br>
@@ -19,29 +13,18 @@
       <span class="saludo-texto">
         {{ saludo }},
         <br />
-        <strong>{{ nombreUsuario }}</strong>
+        <strong>{{ this.usuario.nombre }}</strong>
       </span>
       
       <div class="icon-container">
 
       <div class="circle" style="background-color: var(--color-azul2);">
 
-      <svg
-        width="70"
-        height="70"
-        fill="currentColor"
-        viewBox="0 0 48 48"
-        xmlns="http://www.w3.org/2000/svg"
-        class="icon"
-        style="color: var(--primary-color)"
-      >
-      <path d="M16.542 11.991C22.3921 11.9958 21.8536 19.9527 21.8511 23.1357C21.8478 27.198 22.8451 35.3972 19.7112 38.5181C16.5177 41.6984 10.1346 43.2846 6.94587 40.6296C3.75713 37.9745 9.09663 11.9849 16.542 11.991Z" fill="currentColor"/>
-      <path d="M31.4826 12.0033C25.6326 11.9985 26.158 19.9563 26.1554 23.1392C26.152 27.2016 25.1413 35.3991 28.27 38.5252C31.4583 41.7107 37.8388 43.3074 41.0319 40.6576C44.2249 38.0077 38.928 12.0094 31.4826 12.0033Z" fill="currentColor"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M23.0175 5.99927C23.0175 5.99927 23.0175 5.99915 24.0175 5.99997C25.0175 6.00079 25.0175 6.00091 25.0175 6.00091L25.0056 20.4938C25.0039 22.5951 24.0675 23.7995 23.0074 24.4169C22.51 24.7066 22.0215 24.847 21.6634 24.9163C21.4824 24.9514 21.3289 24.9694 21.2159 24.9787C21.1592 24.9834 21.1123 24.9859 21.0765 24.9873C21.0587 24.988 21.0436 24.9884 21.0314 24.9886L21.0154 24.9888L21.0091 24.9888L21.0052 24.9888C21.0052 24.9888 21.004 24.9888 21.0048 23.9888C21.0056 22.9888 21.0045 22.9888 21.0045 22.9888H21.0035L21.0016 22.9889L20.9986 22.9889L20.9954 22.9889C20.9954 22.9889 20.9976 22.9889 21.0004 22.9887C21.0086 22.9884 21.0261 22.9876 21.0514 22.9855C21.1024 22.9813 21.1831 22.9722 21.2832 22.9528C21.4872 22.9133 21.7484 22.8357 22.0009 22.6886C22.4404 22.4327 23.0044 21.8892 23.0056 20.4922L23.0175 5.99927Z" fill="currentColor"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M25.0175 6.00091C25.0175 6.00091 25.0175 6.00079 24.0175 5.99997C23.0175 5.99915 23.0175 5.99927 23.0175 5.99927L23.0056 20.4922C23.0039 22.5935 23.9382 23.7994 24.9974 24.4185C25.4943 24.709 25.9825 24.8502 26.3405 24.9201C26.5215 24.9555 26.675 24.9738 26.7879 24.9833C26.8446 24.988 26.8916 24.9906 26.9273 24.9921C26.9452 24.9928 26.9603 24.9932 26.9724 24.9934L26.9884 24.9937L26.9947 24.9937L26.9974 24.9937L26.9986 24.9937C26.9986 24.9937 26.9998 24.9937 27.0006 23.9937C27.0014 22.9937 27.0026 22.9937 27.0026 22.9937L27.0036 22.9937L27.0055 22.9937L27.0085 22.9938L27.0117 22.9938C27.0117 22.9938 27.0107 22.9938 27.0066 22.9936C26.9984 22.9933 26.981 22.9924 26.9557 22.9903C26.9047 22.986 26.824 22.9768 26.724 22.9572C26.52 22.9174 26.2589 22.8393 26.0067 22.6919C25.5676 22.4352 25.0044 21.8908 25.0056 20.4938L25.0175 6.00091Z" fill="currentColor"/>
-      </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" height="50px" viewBox="0 -960 960 960" width="50px" fill="var(--primary-color)">
+          <path d="M540-80q-108 0-184-76t-76-184v-23q-86-14-143-80.5T80-600v-240h120v-40h80v160h-80v-40h-40v160q0 66 47 113t113 47q66 0 113-47t47-113v-160h-40v40h-80v-160h80v40h120v240q0 90-57 156.5T360-363v23q0 75 52.5 127.5T540-160q75 0 127.5-52.5T720-340v-67q-35-12-57.5-43T640-520q0-50 35-85t85-35q50 0 85 35t35 85q0 39-22.5 70T800-407v67q0 108-76 184T540-80Zm220-400q17 0 28.5-11.5T800-520q0-17-11.5-28.5T760-560q-17 0-28.5 11.5T720-520q0 17 11.5 28.5T760-480Zm0-40Z"/>
+        </svg>
       </div>
-      <span class="icon-text" style="line-height: 1.1; font-weight: 100;">Departamento: <br> <strong style="font-weight: 700;">Neumología </strong></span>
+      <span class="icon-text" style="line-height: 1.1; font-weight: 100;">Departamento: <br> <strong style="font-weight: 700;"><span> {{ this.departamento }} </span> </strong></span>
     </div>
     </div>
     <br>
@@ -62,7 +45,7 @@
 
   <!-- Botones de acceso rápido -->
   <div class="button-container">
-      <a href="#" style="text-decoration: none;">
+      <a href="/agenda" style="text-decoration: none;">
         <button class="caja-contenido" href="#" >
           <div class="circle">
 
@@ -81,7 +64,7 @@
         </button>
       </a>
   
-      <a href="#" style="text-decoration: none; color: inherit;">
+      <a href="/recetasmedico" style="text-decoration: none; color: inherit;">
         <button class="caja-contenido" href="#">
           <div class="circle">
             <svg
@@ -119,7 +102,7 @@
         </button>
       </a>
 
-      <a href="#" style="text-decoration: none; color: inherit;">
+      <a href="/iniciomedico/informes" style="text-decoration: none; color: inherit;">
         <button class="caja-contenido" href="#">
           <div class="circle">
             <svg
@@ -164,22 +147,51 @@
     </div>
     
     </div>
+  </div>
 </template>
   
   <script>
+  import { useAuthStore } from '../../store/auth';
   import '../assets/styles.css';
+  import apiClient from '@/apiClient';
+  import Header from './Header.vue';
 
   export default {
     name: 'InicioMedico',
+    components: {
+      Header,
+    },
     data() {
       return {
         saludo: '',
         icono: '',
+        departamento: '',
+        usuario: '',
         horaActual: '',
-        nombreUsuario: localStorage.getItem('usuario') || 'Usuario', // Leer el nombre del usuario desde localStorage
       };
     },
     methods: {
+      async datosUsuario() {
+        const authStore = useAuthStore();
+        await authStore.checkAuth();
+        this.usuario = authStore.getUser ? authStore.getUser : 'Usuario';
+      },
+      async obtenerDepartamento() {
+        if (this.usuario && this.usuario.departamento) {
+          try {
+            const response = await apiClient.get(`/api/departamentos/${this.usuario.departamento}`);
+            if (response.status === 200) {
+              this.departamento = response.data.nombre;
+            } else {
+              console.error('Error al obtener el departamento:', response);
+            }
+          } catch (error) {
+            console.error('.Error al obtener el departamento:', error);
+          }
+        } else {
+          console.error('No se ha encontrado el departamento del usuario');
+        }
+      },
       actualizarSaludo() {
         const ahora = new Date();
         const horaCanarias = new Date(ahora.toLocaleString("en-US", { timeZone: "Atlantic/Canary" }));
@@ -188,7 +200,7 @@
         if (hora >= 6 && hora < 12) {
           this.saludo = "Buenos días";
           this.icono = require('@/assets/icons/buenos_dias.png');
-        } else if (hora >= 13 && hora < 20) {
+        } else if (hora < 20) {
           this.saludo = "Buenas tardes";
           this.icono = require('@/assets/icons/buenas_tardes.png');
         } else {
@@ -201,14 +213,26 @@
         const horaCanarias = new Date(ahora.toLocaleString("en-US", { timeZone: "Atlantic/Canary" }));
         this.horaActual = horaCanarias.toLocaleTimeString('es-ES', { hour12: false });
       },
+      async verificarAutenticacion() {
+        const authStore = useAuthStore();
+        await authStore.checkAuth();
+      }
     },
-    mounted() {
+    async mounted() {
+    await this.datosUsuario();
+    await this.obtenerDepartamento();
     this.actualizarSaludo();
     this.actualizarHora();
     setInterval(() => {
       this.actualizarHora();
     }, 1000); // Actualiza la hora cada segundo
-  }
+    },
+    computed: {
+      nombreUsuario() {
+        const authStore = useAuthStore();
+        return authStore.getUser ? `${authStore.getUser.nombre} ${authStore.getUser.apellidos}` : 'Usuario';
+      },
+    },
   };
   </script>
   
@@ -240,13 +264,6 @@
   margin-left: auto;
 }
 
-/* Información sobre tipo de usuario */
-.icon-container {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* Espacio entre el círculo y el texto */
-  margin-left: auto;
-}
 
 /* Estilo del círculo */
 .circle {

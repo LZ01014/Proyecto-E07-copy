@@ -88,13 +88,15 @@ export default {
     async handleRegister() {
       this.errorMessage = ''; 
       try {
-        await axios.post(`${process.env.VUE_APP_BACKEND_URL}/api/register`, this.nuevoUsuario);
+        await axios.post(`${process.env.VUE_APP_BACKEND_URL}/api/usuarios`, this.nuevoUsuario);
         this.$router.push('/login');
       } catch (error) {
         console.error('Error al registrar usuario:', error);
         if (error.response) {
           if (error.response.status === 400) {
             this.errorMessage = 'Solicitud incorrecta. Por favor, verifica los datos ingresados.';
+          } else if (error.response.status === 409) {
+            this.errorMessage = 'El nombre de usuario ya está en uso. Por favor, elige otro.';
           } else {
             this.errorMessage = 'Error del servidor. Por favor, intenta nuevamente más tarde.';
           }

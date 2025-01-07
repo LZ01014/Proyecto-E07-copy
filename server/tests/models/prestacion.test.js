@@ -1,14 +1,22 @@
+process.env.NODE_ENV = 'test';
+
+require('dotenv').config();
 const chai = require('chai');
 const mongoose = require('mongoose');
-const Prestacion = require('../models/Prestacion');
+const Prestacion = require('../../models/Prestacion');
 const { expect } = chai;
 
 describe('Prestacion Model', () => {
   before(async () => {
-    await mongoose.connect(process.env.MONGODB_URI_TEST, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+    const dbUri = process.env.MONGODB_TEST_URI;
+    if (!dbUri) {
+      throw new Error('MONGODB_TEST_URI no está definido');
+    }
+    await mongoose.connect(dbUri);
+  });
+
+  beforeEach(async () => {
+    await Prestacion.deleteMany({});
   });
 
   after(async () => {
@@ -95,6 +103,51 @@ describe('Prestacion Model', () => {
     } catch (error) {
       expect(error).to.exist;
       expect(error.code).to.equal(11000); 
+    }
+  });
+
+  it('should not create a prestacion without nombre', async () => {
+    const prestacion = new Prestacion({
+      descripcion: 'Consulta médica general',
+      indicaciones: 'Asistir en ayunas'
+    });
+
+    try {
+      await prestacion.save();
+    } catch (error) {
+      expect(error).to.exist;
+      expect(error.errors.nombre).to.exist;
+      expect(error.errors.nombre.message).to.equal('Path `nombre` is required.');
+    }
+  });
+
+  it('should not create a prestacion without descripcion', async () => {
+    const prestacion = new Prestacion({
+      nombre: 'Consulta General',
+      indicaciones: 'Asistir en ayunas'
+    });
+
+    try {
+      await prestacion.save();
+    } catch (error) {
+      expect(error).to.exist;
+      expect(error.errors.descripcion).to.exist;
+      expect(error.errors.descripcion.message).to.equal('Path `descripcion` is required.');
+    }
+  });
+
+  it('should not create a prestacion without indicaciones', async () => {
+    const prestacion = new Prestacion({
+      nombre: 'Consulta General',
+      descripcion: 'Consulta médica general'
+    });
+
+    try {
+      await prestacion.save();
+    } catch (error) {
+      expect(error).to.exist;
+      expect(error.errors.indicaciones).to.exist;
+      expect(error.errors.indicaciones.message).to.equal('Path `indicaciones` is required.');
     }
   });
 });

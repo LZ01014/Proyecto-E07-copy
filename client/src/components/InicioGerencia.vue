@@ -1,15 +1,7 @@
 <template>
-  <div class="estilo-pagina">
-    <header class="header">
-      <img src="@/assets/logo.png" alt="Hospital Rambla" class="logo" />
-      <div class="vertical-line"></div>
-      <h1 class="left-align small-text">INTRANET</h1>
-
-      <div class="reloj">
-      <span>{{ horaActual }}</span>
-    </div>
-    </header>
-    <br>
+    <div>
+    <Header/>
+    <div class="estilo-pagina">
     <br>  
     <br>
     
@@ -263,21 +255,24 @@
 
 
 
-</div>
+</div></div>
 </template>
   
 <script>
 import apiClient from '@/apiClient';
 import { useAuthStore } from '../../store/auth';
+import Header from './Header.vue';
 
 
 export default {
   name: "InicioGerencia",
+  components: {
+    Header,
+  },
   data() {
     return {
       saludo: '',
       icono: '',
-      horaActual: '',
       usuarios: [],
       numeroUsuarios: '-',
       numeroPacientes: '-',
@@ -300,18 +295,13 @@ export default {
       if (hora >= 6 && hora < 12) {
         this.saludo = "Buenos días";
         this.icono = require('@/assets/icons/buenos_dias.png');
-      } else if (hora >= 13 && hora < 20) {
+      } else if (hora < 20) {
         this.saludo = "Buenas tardes";
         this.icono = require('@/assets/icons/buenas_tardes.png');
       } else {
         this.saludo = "Buenas noches";
         this.icono = require('@/assets/icons/buenas_noches.png');
       }
-    },
-    actualizarHora() {
-      const ahora = new Date();
-      const horaCanarias = new Date(ahora.toLocaleString("en-US", { timeZone: "Atlantic/Canary" }));
-      this.horaActual = horaCanarias.toLocaleTimeString('es-ES', { hour12: false });
     },
     async obtenerDatosUsuarios() {
       try {
@@ -331,27 +321,17 @@ export default {
   },
   mounted() {
     this.actualizarSaludo();
-    this.actualizarHora();
     this.obtenerDatosUsuarios();
     setInterval(() => {
       this.obtenerDatosUsuarios();
     }, 60000); // Actualiza cada 1 minuto
-    setInterval(() => {
-      this.actualizarHora();
-    }, 1000); // Actualiza la hora cada segundo
+
   }
 };
   </script>
   <style src="@/assets/styles.css"></style>
   <style scoped>
-  
-  .header h1 {
-    font-size: 24px;
-  }
-  
-  .header span {
-    color: var(--primary-color);
-  }
+
 
   .departamentos,
   .aseguradoras,
@@ -376,48 +356,13 @@ export default {
     background: var(--color-azul);
   }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  width: calc(100% - 0rem); 
-  background-color: #e1e1e1;
-  
-  padding: 1rem;
-  text-align: left;
-  display: flex;
-
-  align-items: left;
-  justify-content: left;
-
-  gap: 10px;
-  border-radius: 15px; 
-}
 
 
 .estilo-pagina {  
   margin-left: 2rem; 
   margin-right: 2rem;
 }
-.header img.logo {
-  width: 200px;
-  height: auto; 
-}
-.header h1.left-align {
-  text-align: left;
-  margin-left: 10px; 
-}
-.header h1.small-text {
-  font-size: 20px; 
-  color: var(--primary-color);
-  font-weight: 300;
-}
-.vertical-line {
-  width: 4px;
-  height: 70px;
-  background-color: #92bdf6; 
-}
+
 
 
 
@@ -485,12 +430,6 @@ export default {
   line-height: 1.2; /* Controla la separación entre líneas  */
 }
 
-
-.reloj {
-  font-size: 24px;
-  font-weight: bold;
-  margin-left: auto;
-}
 
 .icon-container {
   display: flex;

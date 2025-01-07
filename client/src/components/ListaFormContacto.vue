@@ -1,12 +1,11 @@
 <template>
-    <div class="contenedor-principal">
-      <!-- Columna izquierda: Formulario de creación de prestaciones -->
-      
-  
-      <!-- Columna derecha: Lista de prestaciones -->
-      <div class="columna-lista">
-        <h3>Listado de Formularios de contacto</h3>
-  
+    <div class="estilo-pagina">
+      <Header/>
+
+      <div class="contenedor-body">
+        <br>
+        <h2 class="titulo">Listado de Formularios de contacto</h2>
+        
         <!-- Indicador de error y carga -->
         <v-alert
           v-if="errorServidor"
@@ -17,7 +16,7 @@
         >
           <span class="alert-text">Fallo de comunicación con el servidor</span>
         </v-alert>
-  
+      
         <div v-if="cargando && !errorServidor" class="text-center">
           <v-progress-circular
             :size="70"
@@ -26,11 +25,11 @@
             indeterminate
           ></v-progress-circular>
         </div>
-  
+      
         <div v-if="!cargando && !errorServidor && form_contacto.length === 0" class="texto-centrado">
           <p>La lista está vacía</p>
         </div>
-  
+      
         <!-- Tabla de formularios -->
         <table class="department-table" v-if="form_contacto.length !== 0">
           <thead>
@@ -44,22 +43,25 @@
           <tbody>
             <tr v-for="form in form_contacto" :key="form.numero">
               <td>{{ form.nombre }}</td>
-              <td>{{ form.email }}</td>
+              <td>{{ form.correo }}</td>
               <td>{{ form.asunto }}</td>
               <td>{{ form.mensaje }}</td>
             </tr>
           </tbody>
         </table>
-
       </div>
+      
     </div>
   </template>
   
   <script>
   import apiClient from '@/apiClient';
-  
+  import Header from './Header.vue';
   export default {
     name: 'ListaFormContacto',
+    components: {
+      Header
+    },
     data() {
       return {
         form_contacto: [],
@@ -89,11 +91,13 @@
   
   <style scoped>
   /* Contenedor principal para organizar formulario y lista en columnas */
-  .contenedor-principal {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
+  .contenedor-body {
     padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 80rem; /* Limitar el ancho máximo */
+    margin: 0 auto; /* Centrar el contenedor */
   }
   
   /* Columna para el formulario de creación de departamentos */
@@ -277,6 +281,12 @@ select:focus {
   width: auto; /* Ajusta el ancho según el contenido */
 }
 
+.titulo {
+  text-align: center;
+  color: #1c1c5a;
+  font-size: 2.5rem; /* Aumentar el tamaño de la fuente */
+  margin-bottom: 20px;
+}
 
 .textarea-azul {
   width: 100%;             /* Ocupa el ancho completo del contenedor */
@@ -296,7 +306,10 @@ select:focus {
   background-color: #C6DEFD; /* Mantiene el color de fondo al hacer foco */
 }
 
-
+.estilo-pagina {  
+  margin-left: 2rem; 
+  margin-right: 2rem;
+}
 
 
 </style>

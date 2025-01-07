@@ -1,14 +1,18 @@
+process.env.NODE_ENV = 'test';
+
+require('dotenv').config();
 const chai = require('chai');
 const mongoose = require('mongoose');
-const ContactForm = require('../models/ContactForm');
+const ContactForm = require('../../models/ContactForms');
 const { expect } = chai;
 
 describe('ContactForm Model', () => {
   before(async () => {
-    await mongoose.connect(process.env.MONGODB_URI_TEST, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+    const dbUri = process.env.MONGODB_TEST_URI;
+    if (!dbUri) {
+      throw new Error('MONGODB_TEST_URI no está definido');
+    }
+    await mongoose.connect(dbUri);
   });
 
   after(async () => {
@@ -94,6 +98,70 @@ describe('ContactForm Model', () => {
       expect(error).to.exist;
       expect(error.errors.nombre).to.exist;
       expect(error.errors.nombre.message).to.equal('Nombre inválido. Solo se permiten letras y espacios.');
+    }
+  });
+
+  it('should not create a contact form without nombre', async () => {
+    const contactForm = new ContactForm({
+      correo: 'juan.perez@example.com',
+      asunto: 'Consulta sobre servicios',
+      mensaje: 'Me gustaría saber más sobre los servicios que ofrecen.'
+    });
+
+    try {
+      await contactForm.save();
+    } catch (error) {
+      expect(error).to.exist;
+      expect(error.errors.nombre).to.exist;
+      expect(error.errors.nombre.message).to.equal('Path `nombre` is required.');
+    }
+  });
+
+  it('should not create a contact form without correo', async () => {
+    const contactForm = new ContactForm({
+      nombre: 'Juan Pérez',
+      asunto: 'Consulta sobre servicios',
+      mensaje: 'Me gustaría saber más sobre los servicios que ofrecen.'
+    });
+
+    try {
+      await contactForm.save();
+    } catch (error) {
+      expect(error).to.exist;
+      expect(error.errors.correo).to.exist;
+      expect(error.errors.correo.message).to.equal('Path `correo` is required.');
+    }
+  });
+
+  it('should not create a contact form without asunto', async () => {
+    const contactForm = new ContactForm({
+      nombre: 'Juan Pérez',
+      correo: 'juan.perez@example.com',
+      mensaje: 'Me gustaría saber más sobre los servicios que ofrecen.'
+    });
+
+    try {
+      await contactForm.save();
+    } catch (error) {
+      expect(error).to.exist;
+      expect(error.errors.asunto).to.exist;
+      expect(error.errors.asunto.message).to.equal('Path `asunto` is required.');
+    }
+  });
+
+  it('should not create a contact form without mensaje', async () => {
+    const contactForm = new ContactForm({
+      nombre: 'Juan Pérez',
+      correo: 'juan.perez@example.com',
+      asunto: 'Consulta sobre servicios'
+    });
+
+    try {
+      await contactForm.save();
+    } catch (error) {
+      expect(error).to.exist;
+      expect(error.errors.mensaje).to.exist;
+      expect(error.errors.mensaje.message).to.equal('Path `mensaje` is required.');
     }
   });
 });

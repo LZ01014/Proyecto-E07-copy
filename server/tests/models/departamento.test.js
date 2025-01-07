@@ -1,14 +1,22 @@
+process.env.NODE_ENV = 'test';
+
+require('dotenv').config();
 const chai = require('chai');
 const mongoose = require('mongoose');
-const Departamento = require('../models/Departamento');
+const Departamento = require('../../models/Departamento');
 const { expect } = chai;
 
 describe('Departamento Model', () => {
   before(async () => {
-    await mongoose.connect(process.env.MONGODB_URI_TEST, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+    const dbUri = process.env.MONGODB_TEST_URI;
+    if (!dbUri) {
+      throw new Error('MONGODB_TEST_URI no está definido');
+    }
+    await mongoose.connect(dbUri);
+  });
+
+  beforeEach(async () => {
+    await Departamento.deleteMany({});
   });
 
   after(async () => {
@@ -25,6 +33,7 @@ describe('Departamento Model', () => {
     const savedDepartamento = await departamento.save();
     expect(savedDepartamento._id).to.exist;
     expect(savedDepartamento.nombre).to.equal('Cardiología');
+    expect(savedDepartamento.tipo).to.equal('Especialidad médica');
   });
 
   it('should not create a departamento with short nombre', async () => {
@@ -60,7 +69,7 @@ describe('Departamento Model', () => {
   it('should not create a departamento with invalid tipo', async () => {
     const departamento = new Departamento({
       nombre: 'Cardiología',
-      tipo: 'Invalid Tipo'
+      tipo: 'Tipo inválido'
     });
 
     try {
@@ -68,7 +77,35 @@ describe('Departamento Model', () => {
     } catch (error) {
       expect(error).to.exist;
       expect(error.errors.tipo).to.exist;
-      expect(error.errors.tipo.message).to.equal('`Invalid Tipo` is not a valid enum value for path `tipo`.');
+      expect(error.errors.tipo.message).to.equal('`Tipo inválido` is not a valid enum value for path `tipo`.');
+    }
+  });
+
+  it('should not create a departamento without nombre', async () => {
+    const departamento = new Departamento({
+      tipo: 'Especialidad médica'
+    });
+
+    try {
+      await departamento.save();
+    } catch (error) {
+      expect(error).to.exist;
+      expect(error.errors.nombre).to.exist;
+      expect(error.errors.nombre.message).to.equal('Path `nombre` is required.');
+    }
+  });
+
+  it('should not create a departamento without tipo', async () => {
+    const departamento = new Departamento({
+      nombre: 'Cardiología'
+    });
+
+    try {
+      await departamento.save();
+    } catch (error) {
+      expect(error).to.exist;
+      expect(error.errors.tipo).to.exist;
+      expect(error.errors.tipo.message).to.equal('Path `tipo` is required.');
     }
   });
 
@@ -77,18 +114,19 @@ describe('Departamento Model', () => {
       nombre: 'Cardiología',
       tipo: 'Especialidad médica'
     });
-    await departamento1.save();
 
     const departamento2 = new Departamento({
       nombre: 'Cardiología',
       tipo: 'Administración'
     });
 
+    await departamento1.save();
+
     try {
       await departamento2.save();
     } catch (error) {
       expect(error).to.exist;
-      expect(error.code).to.equal(11000); // Código de error para duplicados en MongoDB
+      expect(error.code).to.equal(11000); 
     }
   });
 });

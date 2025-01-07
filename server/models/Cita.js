@@ -17,21 +17,15 @@ const citaSchema = new mongoose.Schema({
     ref: 'Prestacion', 
     required: true 
   },
-  fecha: { 
+  fechaHora: { 
     type: Date, 
     required: true,
-    validate(value) {
-      if (!validator.isDate(value.toString())) {
-        throw new Error('Fecha inválida.');
-      }
-    }
-  },
-  hora: { 
-    type: String, 
-    required: true,
-    validate(value) {
-      if (!validator.isLength(value, { min: 5, max: 5 }) || !/^\d{2}:\d{2}$/.test(value)) {
-        throw new Error('Hora inválida. Debe estar en formato HH:MM.');
+    validate: {
+      validator: function(value) {
+        if (isNaN(Date.parse(value))) {
+          throw new Error('Fecha y hora inválidas.');
+        }
+        return true;
       }
     }
   },
@@ -56,8 +50,7 @@ citaSchema.pre('save', async function(next) {
   try {
     const existingCita = await mongoose.models.Cita.findOne({
       medicoId: this.medicoId,
-      fecha: this.fecha,
-      hora: this.hora
+      fechaHora: this.fechaHora,
     });
 
     if (existingCita && existingCita._id.toString() !== this._id.toString()) {

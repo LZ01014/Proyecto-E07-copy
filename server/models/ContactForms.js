@@ -32,8 +32,8 @@ const contactFormSchema = new mongoose.Schema({
     type: String, 
     required: true,
     trim: true,
-    minlength: 5,
-    maxlength: 100,
+    minlength: [5, 'Asunto inválido. Debe tener entre 5 y 100 caracteres.'],
+    maxlength: [100, 'Asunto inválido. Debe tener entre 5 y 100 caracteres.'],
     validate(value) {
       if (!validator.isLength(value, { min: 5, max: 100 })) {
         throw new Error('Asunto inválido. Debe tener entre 5 y 100 caracteres.');
@@ -44,8 +44,8 @@ const contactFormSchema = new mongoose.Schema({
     type: String, 
     required: true,
     trim: true,
-    minlength: 10,
-    maxlength: 1000,
+    minlength: [10, 'Mensaje inválido. Debe tener entre 10 y 1000 caracteres.'],
+    maxlength: [1000, 'Mensaje inválido. Debe tener entre 10 y 1000 caracteres.'],
     validate(value) {
       if (!validator.isLength(value, { min: 10, max: 1000 })) {
         throw new Error('Mensaje inválido. Debe tener entre 10 y 1000 caracteres.');

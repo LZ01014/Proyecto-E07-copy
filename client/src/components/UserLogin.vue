@@ -39,8 +39,11 @@
           ¿No eres usuario? <a href="/register">Regístrate</a>
         </p>
 
-        <!-- Enlace para iniciar sesión con Google -->
-        <a href="http://localhost:3000/auth/google" class="google-login-button">Iniciar sesión con Google</a>
+        <div class="or-divider">
+          <span class="or-text">o</span>
+        </div>
+
+        <a href="http://localhost:3000/auth/google/callback" class="google-login-button">Inicia sesión con Google</a>
       </section>
     </main>
   </div>
@@ -219,6 +222,25 @@ export default {
 .error-message {
   color: red;
   margin-top: 1rem;
+}
+
+.or-divider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 1rem 0;
+}
+.or-divider .or-text {
+  margin: 0 1rem;
+  font-weight: bold;
+  color: #17195e;
+}
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #17195e;
 }
 
 .google-login-button {

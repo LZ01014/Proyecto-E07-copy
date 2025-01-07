@@ -31,8 +31,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
     trim: true,
-    minlength: 3,
-    maxlength: 30,
+    minlength: [3, 'Nombre de usuario inválido. Debe tener al menos 3 caracteres.'],
+    maxlength: [30, 'Nombre de usuario inválido. No puede exceder los 30 caracteres.'],
     validate(value) {
       if (!validator.isAlphanumeric(value, 'es-ES')) {
         throw new Error('Nombre de usuario inválido. Solo se permiten letras y números.');
@@ -63,7 +63,7 @@ const userSchema = new mongoose.Schema({
   tipo: {
     type: String,
     required: true,
-    enum: ['Paciente', 'Doctor', 'Administrador']
+    enum: ['Paciente', 'Médico', 'Administración', 'Gerencia']
   },
   departamento: {
     type: mongoose.Schema.Types.ObjectId,

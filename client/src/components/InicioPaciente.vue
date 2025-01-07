@@ -1,21 +1,8 @@
 <template>
-  <div class="estilo-pagina">
-    <header class="header">
-      <img src="@/assets/logo.png" alt="Hospital Rambla" class="logo" />
-      <div class="vertical-line"></div>
-      <h1 class="left-align small-text">PORTAL DEL PACIENTE</h1>
-
-      <div class="user-head">
-        <svg width="36" height="36" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #92bdf6;">
-          <path d="M6 36C6 31.0347 17.9925 28 24 28C30.0075 28 42 31.0347 42 36V42H6V36Z" fill="currentColor"/>
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M24 26C29.5228 26 34 21.5228 34 16C34 10.4772 29.5228 6 24 6C18.4772 6 14 10.4772 14 16C14 21.5228 18.4772 26 24 26Z" fill="currentColor"/>
-        </svg>
-        <h1><router-link to="/iniciopaciente/perfil" class="usuario-boton">{{ nombreUsuario }}</router-link></h1>
-      </div>
-      <div class="reloj">
-        <span>{{ horaActual }}</span>
-      </div>
-    </header>
+  <div>
+    <!-- Importa el header -->
+    <Header/>
+    <div class="estilo-pagina">
     <br>
     <br>  
     <br>
@@ -52,34 +39,17 @@
         <button class="header-ctitle">Próximas citas</button>
       </div>
       <div class="citas-content">
-        <div class="cita">
+        <div v-for="cita in proximasCitas" :key="cita._id" class="cita">
           <div class="icono"></div>
           <div class="detalles">
-            <span class="fecha">Lunes, 23 de enero de 2025 a las 16:32 h.</span>
-            <span class="especialidad">Neumología</span>
-            <span class="doctor">Dr. Yeray Martín Sosa</span>
-          </div>
-        </div>
-        <div class="cita">
-          <div class="icono"></div>
-          <div class="detalles">
-            <span class="fecha">Lunes, 23 de enero de 2025 a las 16:32 h.</span>
-            <span class="especialidad">Neumología</span>
-            <span class="doctor">Dr. Yeray Martín Sosa</span>
-          </div>
-        </div>
-        <div class="cita">
-          <div class="icono"></div>
-          <div class="detalles">
-            <span class="fecha">Lunes, 23 de enero de 2025 a las 16:32 h.</span>
-            <span class="especialidad">Neumología</span>
-            <span class="doctor">Dr. Yeray Martín Sosa</span>
+            <span class="fecha">{{ formatearFecha(cita.fechaHora) }} a las {{ formatearHora(cita.fechaHora) }}</span>
+            <span class="especialidad">{{ cita.especialidadId.nombre }}</span>
+            <span class="especialidad">{{ cita.prestacionId.nombre }}</span>
+            <span class="doctor">{{ cita.medicoId.nombre }} {{ cita.medicoId.apellidos }}</span>
           </div>
         </div>
       </div>
-      <div class="ver-mas-container">
-        <button class="ver-mas">Ver más</button>
-      </div>
+      <br>
     </div>
 
     <br>
@@ -87,45 +57,23 @@
 
     <!-- Botones de acceso rápido -->
     <div class="button-container">
-      <a href="#" style="text-decoration: none;">
+      <a href="/citas" style="text-decoration: none;">
         <button class="caja-contenido" href="#" >
           <div class="circle">
-            <svg
-              width="48"
-              height="48"
-              viewBox="0 0 48 48"
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon icono-blanco"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M21.671 6.80092C23.4182 5.73302 25.6603 5.73303 27.4076 6.80092L29.4455 8.04646C32.3025 9.79264 35.5581 10.1824 38.8277 10.5739C39.8847 10.7005 40.9432 10.8272 41.9901 11C41.9901 11 42.0132 12.8335 41.9889 13.6659L41.78 20.817C41.6008 26.9498 38.8735 32.7654 34.1951 36.991C31.988 38.9844 29.7054 40.7851 27.0825 42.2813C25.5274 43.1684 23.6035 43.2387 21.9814 42.4676C18.953 41.028 16.271 39.2023 13.8227 36.991C9.14422 32.7654 6.41696 26.9498 6.23778 20.817L6.02952 13.6887C6.00485 12.8445 6.02952 11 6.02952 11C6.8795 10.8996 7.74583 10.8173 8.61872 10.7344C12.4722 10.3682 16.4534 9.98986 19.7195 7.99367L21.671 6.80092ZM21.9998 22V15H25.9998V22H32.9998V26H25.9998V33H21.9998V26H14.9998V22H21.9998Z"
-                fill="currentColor"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="white">
+              <path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z"/>
             </svg>
           </div>
           <br>
-          <span class="button-text">Pedir cita</span>
+            <span class="button-text">Gestionar citas</span>
         </button>
       </a>
   
-      <a href="#" style="text-decoration: none; color: inherit;">
+      <a href="/iniciopaciente/recetaspaciente" style="text-decoration: none; color: inherit;">
         <button class="caja-contenido" href="#">
           <div class="circle">
-            <svg
-              width="48"
-              height="48"
-              viewBox="0 0 48 48"
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon icono-blanco"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M21.671 6.80092C23.4182 5.73302 25.6603 5.73303 27.4076 6.80092L29.4455 8.04646C32.3025 9.79264 35.5581 10.1824 38.8277 10.5739C39.8847 10.7005 40.9432 10.8272 41.9901 11C41.9901 11 42.0132 12.8335 41.9889 13.6659L41.78 20.817C41.6008 26.9498 38.8735 32.7654 34.1951 36.991C31.988 38.9844 29.7054 40.7851 27.0825 42.2813C25.5274 43.1684 23.6035 43.2387 21.9814 42.4676C18.953 41.028 16.271 39.2023 13.8227 36.991C9.14422 32.7654 6.41696 26.9498 6.23778 20.817L6.02952 13.6887C6.00485 12.8445 6.02952 11 6.02952 11C6.8795 10.8996 7.74583 10.8173 8.61872 10.7344C12.4722 10.3682 16.4534 9.98986 19.7195 7.99367L21.671 6.80092ZM21.9998 22V15H25.9998V22H32.9998V26H25.9998V33H21.9998V26H14.9998V22H21.9998Z"
-                fill="currentColor"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="white">
+              <path d="M280-280h84l240-238-86-86-238 238v86Zm352-266 42-44q6-6 6-14t-6-14l-56-56q-6-6-14-6t-14 6l-44 42 86 86ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm280-590q13 0 21.5-8.5T510-820q0-13-8.5-21.5T480-850q-13 0-21.5 8.5T450-820q0 13 8.5 21.5T480-790ZM200-200v-560 560Z"/>
             </svg>
           </div>
           <br style="display: block; content: ''; margin-top: 0.2rem;">
@@ -136,19 +84,8 @@
       <a href="#" style="text-decoration: none; color: inherit;">
         <button class="caja-contenido" href="#">
           <div class="circle">
-            <svg
-              width="48"
-              height="48"
-              viewBox="0 0 48 48"
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon icono-blanco"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M21.671 6.80092C23.4182 5.73302 25.6603 5.73303 27.4076 6.80092L29.4455 8.04646C32.3025 9.79264 35.5581 10.1824 38.8277 10.5739C39.8847 10.7005 40.9432 10.8272 41.9901 11C41.9901 11 42.0132 12.8335 41.9889 13.6659L41.78 20.817C41.6008 26.9498 38.8735 32.7654 34.1951 36.991C31.988 38.9844 29.7054 40.7851 27.0825 42.2813C25.5274 43.1684 23.6035 43.2387 21.9814 42.4676C18.953 41.028 16.271 39.2023 13.8227 36.991C9.14422 32.7654 6.41696 26.9498 6.23778 20.817L6.02952 13.6887C6.00485 12.8445 6.02952 11 6.02952 11C6.8795 10.8996 7.74583 10.8173 8.61872 10.7344C12.4722 10.3682 16.4534 9.98986 19.7195 7.99367L21.671 6.80092ZM21.9998 22V15H25.9998V22H32.9998V26H25.9998V33H21.9998V26H14.9998V22H21.9998Z"
-                fill="currentColor"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="white">
+              <path d="M160-120q-33 0-56.5-23.5T80-200v-560q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v560q0 33-23.5 56.5T800-120H160Zm0-80h640v-560H160v560Zm40-80h200v-80H200v80Zm382-80 198-198-57-57-141 142-57-57-56 57 113 113Zm-382-80h200v-80H200v80Zm0-160h200v-80H200v80Zm-40 400v-560 560Z"/>
             </svg>
           </div>
           <br>
@@ -156,26 +93,26 @@
         </button>
       </a>
 
-      <a href="#" style="text-decoration: none; color: inherit;">
+      <a href="/justificantes" style="text-decoration: none; color: inherit;">
         <button class="caja-contenido" href="#">
           <div class="circle">
-            <svg
-              width="48"
-              height="48"
-              viewBox="0 0 48 48"
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon icono-blanco"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M21.671 6.80092C23.4182 5.73302 25.6603 5.73303 27.4076 6.80092L29.4455 8.04646C32.3025 9.79264 35.5581 10.1824 38.8277 10.5739C39.8847 10.7005 40.9432 10.8272 41.9901 11C41.9901 11 42.0132 12.8335 41.9889 13.6659L41.78 20.817C41.6008 26.9498 38.8735 32.7654 34.1951 36.991C31.988 38.9844 29.7054 40.7851 27.0825 42.2813C25.5274 43.1684 23.6035 43.2387 21.9814 42.4676C18.953 41.028 16.271 39.2023 13.8227 36.991C9.14422 32.7654 6.41696 26.9498 6.23778 20.817L6.02952 13.6887C6.00485 12.8445 6.02952 11 6.02952 11C6.8795 10.8996 7.74583 10.8173 8.61872 10.7344C12.4722 10.3682 16.4534 9.98986 19.7195 7.99367L21.671 6.80092ZM21.9998 22V15H25.9998V22H32.9998V26H25.9998V33H21.9998V26H14.9998V22H21.9998Z"
-                fill="currentColor"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="white">
+              <path d="M200-200h560v-367L567-760H200v560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h400l240 240v400q0 33-23.5 56.5T760-120H200Zm80-160h400v-80H280v80Zm0-160h400v-80H280v80Zm0-160h280v-80H280v80Zm-80 400v-560 560Z"/>
             </svg>
           </div>
           <br>
-          <span class="button-text">Justificaciones</span>
+          <span class="button-text">Justificantes</span>
+        </button>
+      </a>
+      <a href="/iniciopaciente/informes" style="text-decoration: none; color: inherit;">
+        <button class="caja-contenido" href="#">
+          <div class="circle">
+            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="white">
+              <path d="M200-200h560v-367L567-760H200v560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h400l240 240v400q0 33-23.5 56.5T760-120H200Zm80-160h400v-80H280v80Zm0-160h400v-80H280v80Zm0-160h280v-80H280v80Zm-80 400v-560 560Z"/>
+            </svg>
+          </div>
+          <br>
+          <span class="button-text">Informes</span>
         </button>
       </a>
     </div>
@@ -197,27 +134,54 @@
       <button class="btn-encuestas">Ver encuestas</button>
     </div>
   </div>
+</div>
   </template>
   
   <script>
+  import Header from '@/components/Header.vue'; // Ajusta la ruta si es necesario
+
   import { useAuthStore } from '../../store/auth';
-  
+  import apiClient from '@/apiClient';
+
   export default {
     name: "InicioPaciente",
+    components: {
+      Header,
+    },
     data() {
       return {
         saludo: '',
         icono: '',
         horaActual: '',
+        proximasCitas: []
       };
     },
     computed: {
       nombreUsuario() {
         const authStore = useAuthStore();
-        return authStore.getUser ? authStore.getUser.nombre : 'Usuario';
+        return authStore.getUser ? `${authStore.getUser.nombre} ${authStore.getUser.apellidos}` : 'Usuario';
+      },
+      usuarioId() {
+      const authStore = useAuthStore();
+      return authStore.getUser ? authStore.getUser._id : null;
       }
     },
     methods: {
+      async obtenerProximasCitas() {
+        try {
+          const response = await apiClient.get('/api/citas', {
+            params: { pacienteId: this.usuarioId }
+          });
+          const citas = response.data;
+          const ahora = new Date();
+          this.proximasCitas = citas
+            .filter(cita => new Date(cita.fechaHora) > ahora)
+            .sort((a, b) => new Date(a.fechaHora) - new Date(b.fechaHora))
+            .slice(0, 3);
+        } catch (error) {
+          console.error('Error al obtener las próximas citas:', error);
+        }
+      },
       actualizarSaludo() {
         const ahora = new Date();
         const horaCanarias = new Date(ahora.toLocaleString("en-US", { timeZone: "Atlantic/Canary" }));
@@ -226,7 +190,7 @@
         if (hora >= 6 && hora < 12) {
           this.saludo = "Buenos días";
           this.icono = require('@/assets/icons/buenos_dias.png');
-        } else if (hora >= 13 && hora < 20) {
+        } else if (hora < 20) {
           this.saludo = "Buenas tardes";
           this.icono = require('@/assets/icons/buenas_tardes.png');
         } else {
@@ -246,12 +210,26 @@
       handleLogout() {
       const authStore = useAuthStore();
       authStore.logout();
+      },
+      formatearFecha(fechaHora) {
+        const fecha = new Date(fechaHora);
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const anio = fecha.getFullYear();
+        return `${dia}/${mes}/${anio}`;
+      },
+      formatearHora(fechaHora) {
+        const fecha = new Date(fechaHora);
+        const horas = String(fecha.getHours()).padStart(2, '0');
+        const minutos = String(fecha.getMinutes()).padStart(2, '0');
+        return `${horas}:${minutos} h`;
       }
     },
     async mounted() {
       await this.verificarAutenticacion();
       this.actualizarSaludo();
       this.actualizarHora();
+      this.obtenerProximasCitas(); // Llamar a la función para obtener las próximas citas
       setInterval(() => {
         this.actualizarHora();
       }, 1000); // Actualiza la hora cada segundo
@@ -262,29 +240,17 @@
 <style src="@/assets/styles.css"></style>
 <style scoped>
 
-.header h1 {
-  font-size: 24px;
-}
-
-.header span {
-  color: var(--primary-color);
-}
 
 .departamento-info p {
   margin: 5px 0;
 }
 
-.usuario-boton {
-color: #007bff;
-text-decoration: none;
-cursor: pointer;
-font-size: 0.8em;
-margin-left: 0.4em;
-}
+
   
-  button:hover {
-    background: var(--color-azul);
-  }
+button:hover {
+  background: var(--color-azul);
+}
+
 button {
   background: #007bff;
   color: white;
@@ -294,47 +260,10 @@ button {
   cursor: pointer;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  width: calc(100% - 0rem); 
-  background-color: #e1e1e1;
-  
-  padding: 1rem;
-  text-align: left;
-  display: flex;
-
-  align-items: left;
-  justify-content: left;
-
-  gap: 10px;
-  border-radius: 15px; 
-}
-
-
 .estilo-pagina {  
   margin-left: 2rem; 
   margin-right: 2rem;
-}
-.header img.logo {
-  width: 200px;
-  height: auto; 
-}
-.header h1.left-align {
-  text-align: left;
-  margin-left: 10px; 
-}
-.header h1.small-text {
-  font-size: 20px; 
-  color: var(--primary-color);
-  font-weight: 300;
-}
-.vertical-line {
-  width: 4px;
-  height: 70px;
-  background-color: #92bdf6; 
+  
 }
 
 .icono-blanco {
@@ -356,12 +285,6 @@ button {
   font-size: 45px; /* Ajusta el tamaño de la fuente */
   color: var(--primary-color);
   line-height: 1.2; /* Controla la separación entre líneas  */
-}
-
-
-.reloj {
-  font-size: 24px;
-  font-weight: bold;
 }
 
 /* Estilo del círculo */

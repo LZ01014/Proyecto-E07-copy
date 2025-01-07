@@ -404,9 +404,8 @@ export default {
   margin-top: 2rem;
   border-radius: 15px; 
   display: flex;             
-  justify-content: center;  
+  justify-content: space-around;  
   align-items: center;       
-  gap: 160px;                 
   padding: 20px;                   
   width: calc(100% - 2rem);                
 }

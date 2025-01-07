@@ -12,7 +12,7 @@ export default {
   name: 'PaginaError',
   methods: {
     volverAlInicio() {
-      this.$router.push({ name: 'Inicio' }); // Reemplaza 'Inicio' con el nombre de la ruta de inicio en tu app
+      this.$router.push('/');
     }
   }
 };

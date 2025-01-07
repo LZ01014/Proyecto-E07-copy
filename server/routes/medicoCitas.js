@@ -45,53 +45,41 @@ router.get('/citas', async (req, res) => {
 router.post('/citas', async (req, res) => {
   try {
     const { medicoId, especialidadId, prestacionId, fecha, hora, duracion, pacienteId } = req.body;
-    console.log('Recibida petición cita');
-
+    console.log('Recibida petición para crear cita');
+    
+    if (!hora) {
+      console.log('Hora no proporcionada');
+      return res.status(400).json({ error: 'Debe proporcionar una hora' });
+    }
+    
     if (!fecha) {
       console.log('Fecha no proporcionada');
       return res.status(400).json({ error: 'Debe proporcionar una fecha' });
     }
 
-    if (!hora) {
-      console.log('Hora no proporcionada');
-      return res.status(400).json({ error: 'Debe proporcionar una hora' });
+    // Combinar fecha y hora en un solo objeto Date
+    const fechaHora = new Date(`${fecha}T${hora}:00.000Z`); // Se añade ":00.000Z" para segundos y zona horaria UTC.
+    if (isNaN(fechaHora.getTime())) {
+      console.log(`FechaHora inválida: ${fecha}T${hora}`);
+      return res.status(400).json({ error: 'Fecha y hora inválidas' });
     }
-
-    // Validar formato de `fecha`
-    if (!fecha || isNaN(Date.parse(fecha))) {
-      return res.status(400).json({ message: 'Fecha no válida' });
-    }
-
-    // Convertir la combinación de fecha y hora a un objeto Date para cálculos
-    const inicioCita = new Date(`${fecha}T${hora}`);
-    if (isNaN(inicioCita.getTime())) {
-      return res.status(400).json({ message: 'Hora no válida' });
-    }
+    
 
     // Calcular la hora de finalización de la cita
-    const finCita = new Date(inicioCita);
-    finCita.setMinutes(inicioCita.getMinutes() + duracion);
+    const finCita = new Date(fechaHora);
+    finCita.setMinutes(fechaHora.getMinutes() + duracion);
 
-    // Buscar citas del mismo médico que se solapen en el mismo día
+    // Buscar citas del mismo médico que se solapen
     const citas = await Cita.find({
       medicoId,
-      fecha
+      fechaHora: {
+        $gte: fechaHora,
+        $lt: finCita
+      }
     });
 
-    // Verificar solapamientos
-    const conflicto = citas.some((cita) => {
-      const citaInicio = new Date(`${cita.fecha.toISOString().split('T')[0]}T${cita.hora}`); // Convertir hora a Date
-      const citaFin = new Date(citaInicio);
-      citaFin.setMinutes(citaInicio.getMinutes() + cita.duracion);
-      // Verificar si las citas se solapan
-      return (
-        (citaInicio < finCita && citaFin > inicioCita) // Rango de tiempo se solapa
-      );
-    });
-
-    if (conflicto) {
-      console.log('El médico ya tiene una cita en esta franja horaria.');
-      return res.status(400).json({ message: 'El médico ya tiene una cita en esta franja horaria.' });
+    if (citas.length > 0) {
+      return res.status(400).json({ error: 'El médico ya tiene una cita en esta franja horaria.' });
     }
 
     // Crear y guardar la nueva cita
@@ -99,8 +87,7 @@ router.post('/citas', async (req, res) => {
       medicoId,
       especialidadId,
       prestacionId,
-      fecha: new Date(fecha), // Aseguramos que sea de tipo Date
-      hora, // Se almacena como String
+      fechaHora, // Guardamos la combinación
       duracion,
       pacienteId
     });
@@ -182,10 +169,13 @@ router.put('/citas/:id', async (req, res) => {
 
     if (pacienteId) {
       cita.pacienteId = pacienteId;
+    } else {
+      cita.pacienteId = null;
     }
 
     // Guardar la cita actualizada
     const citaActualizada = await cita.save();
+    console.log('Cita actualizada:', citaActualizada);
 
     res.status(200).json(citaActualizada);
   } catch (error) {
