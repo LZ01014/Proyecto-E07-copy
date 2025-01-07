@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./tests --recursive"
+    "test": "mocha ./tests --recursive",
+    "coverage": "nyc --reporter=lcov --reporter=text mocha ./tests --recursive --timeout 10000 --exit"
   },
   "keywords": [],
   "author": "",
