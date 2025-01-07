@@ -36,7 +36,7 @@ on:
       - completed
 
 permissions:
-  pull-requests: read # allows SonarCloud to decorate PRs with analysis results
+  pull-requests: read
 
 jobs:
   Analysis:
@@ -46,24 +46,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Run tests with coverage
+        run: npm run coverage
+        
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
+
       - name: Analyze with SonarCloud
-        # You can pin the exact commit or the version.
         uses: SonarSource/sonarcloud-github-action@v2.2.0
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          # Additional arguments for the SonarScanner CLI
-          
-         args: >
-          -Dsonar.projectKey=LZ01014_Proyecto-E07-copy
-          -Dsonar.organization=lz01014
-          -Dsonar.sources=.
-          -Dsonar.verbose=true
-          -Dsonar.tests=server/tests
-          -Dsonar.test.inclusions=**/*.test.js
-          -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,**/build/**,*package*
-          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-          -Dsonar.coverage.exclusions=**/node_modules/**,**/dist/**,**/coverage/**
-
-            
-          
+          args: >
+            -Dsonar.projectKey=LZ01014_Proyecto-E07-copy
+            -Dsonar.organization=lz01014
+            -Dsonar.sources=.
+            -Dsonar.verbose=true
+            -Dsonar.tests=server/tests
+            -Dsonar.test.inclusions=**/*.test.js
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,**/build/**,*package*
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
