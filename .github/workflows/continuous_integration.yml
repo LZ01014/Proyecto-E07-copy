@@ -57,4 +57,5 @@ jobs:
     - name: Run tests
       run: |
         cd server
+        ls -l ./tests
         npm test -- --timeout 10000
