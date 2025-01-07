@@ -17,6 +17,7 @@ const jwt = require('jsonwebtoken');
     let testUserId;
 
     before(async () => {
+      console.log('Before hook starting...');
       const usuario = new Usuario({
         nombre: 'Test',
         apellidos: 'User',
@@ -30,10 +31,13 @@ const jwt = require('jsonwebtoken');
 
       // Crear un token de administrador para pruebas
       adminToken = jwt.sign({ id: 'adminuser', role: 'Administración' }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      console.log('Before hook completed.');
     });
 
     after(async () => {
+      console.log('After hook starting...');
       await Usuario.findByIdAndDelete(testUserId);
+      console.log('After hook completed.');
     });
     
     it('should generate a JWT token on successful login', (done) => {
