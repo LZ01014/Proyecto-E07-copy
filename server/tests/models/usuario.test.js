@@ -23,6 +23,12 @@ const Usuario = require('../../models/Usuario');
 
     after(async () => {
       await mongoose.connection.close();
+      console.log('Checking for open handles...');
+      setTimeout(() => {
+        process._getActiveHandles().forEach((handle) => {
+          console.log(handle);
+        });
+      }, 1000);
     });
 
     it('should create a valid user', async () => {
