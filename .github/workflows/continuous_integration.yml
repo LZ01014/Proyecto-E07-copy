@@ -53,14 +53,6 @@ jobs:
 
     - name: Print environment variables
       run: env
-
-    - name: List test files
-      run: |
-        ls -l server/tests
-        cd server/tests
-        find .
         
-    - name: Run tests
-      run: |
-        cd server
-        npm test -- --timeout 10000
+    - name: Run tests with coverage
+      run: npm test -- --timeout 10000 --reporter mocha-json --reporter-options output=coverage/coverage.json
