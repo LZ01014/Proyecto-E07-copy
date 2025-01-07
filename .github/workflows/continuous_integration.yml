@@ -53,8 +53,13 @@ jobs:
 
     - name: Print environment variables
       run: env
+
+    - name: Install Reporter dependencies
+      run: |
+        npm install --save-dev nyc mocha
+        npm install --save-dev mocha-lcov-reporter
         
     - name: Run tests with coverage
       run: |
         cd server
-        npm test -- --timeout 10000 --reporter mocha-json --reporter-options output=coverage/coverage.json
+        npx nyc --reporter=lcov mocha --timeout 10000
