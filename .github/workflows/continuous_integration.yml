@@ -62,4 +62,4 @@ jobs:
     - name: Run tests with coverage
       run: |
         cd server
-        npm coverage
+        npm run coverage
