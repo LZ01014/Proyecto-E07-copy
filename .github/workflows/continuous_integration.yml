@@ -68,5 +68,5 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
           name: coverage-reports
-          path: /server/coverage/ # Carpeta o archivo a guardar
+          path: server/coverage/ # Carpeta o archivo a guardar
 
