@@ -62,4 +62,4 @@ jobs:
     - name: Run tests with coverage
       run: |
         cd server
-        npx nyc --reporter=lcov mocha --timeout 10000
+        npm coverage
