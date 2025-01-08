@@ -52,7 +52,7 @@ jobs:
         with:
           name: coverage-reports
           path: server/coverage/
-          
+          run-id: ${{ github.event.workflow_run.id }}
 
 
       - name: Analyze with SonarCloud
